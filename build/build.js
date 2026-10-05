@@ -140,7 +140,7 @@ function buildLetter(a) {
 function buildIndex() {
   const card = a => `
           <a class="card" href="${page(a.id)}">
-            <div class="card-thumb" style="background:${a.thumb ? `url('${esc(a.thumb)}') center / cover, ` : ""}${esc(a.color)}"><span>${esc(TEMPLATE_LABEL[a.template])}</span></div>
+            <div class="card-thumb" style="background:${a.thumb ? `url('${esc(a.thumb)}') ${esc(a.thumbPos || "center")} / cover, ` : ""}${esc(a.color)}"><span>${esc(TEMPLATE_LABEL[a.template])}</span></div>
             <div class="card-body">
               <p class="card-kicker">${esc(a.kicker)}</p>
               <h3>${esc(a.title)}</h3>
