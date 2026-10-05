@@ -1,0 +1,6 @@
+# 관리자 화면 보호 강화 (선택): 병원 내부 IP만 허용하려면 아래 주석을 풀고 IP를 넣으세요.
+# Require ip 203.0.113.10
+Options -Indexes
+<FilesMatch "^_">
+  Require all denied
+</FilesMatch>

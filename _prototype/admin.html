@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>운영 대시보드 | 나눔, 그리고 나음 관리자</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin">
+  <div class="test-bar" role="note">관리자 전용 페이지 · 연습용 접근 제한이며 실운영 전 서버 인증으로 교체해야 합니다</div>
+
+  <header class="site-header">
+    <div class="wrap admin-header">
+      <a class="brand" href="index.html"><small>센트럴서울안과 소식지</small><strong>운영 대시보드</strong></a>
+      <div id="who" class="who" hidden>
+        <span id="who-name"></span>
+        <button type="button" class="tool" id="logout">로그아웃</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="admin" tabindex="-1"></main>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script src="store.js"></script>
+  <script src="data.js"></script>
+  <script src="admin-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

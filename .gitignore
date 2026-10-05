@@ -1,0 +1,14 @@
+# 비밀번호·자격증명 (절대 업로드 금지)
+*.local.txt
+*credentials*
+.env*
+
+# 서버 DB 파일 (접수 데이터)
+nanum/data/*.sqlite*
+*.sqlite
+*.db
+
+# 시스템·도구 파일
+.DS_Store
+.claude/
+node_modules/
