@@ -38,7 +38,7 @@ function layout({ title, description, article = "", main, bodyClass = "" }) {
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
   <!-- OG 이미지: 대표 이미지가 정해지면 주석을 풀고 경로 입력 -->
-  <!-- <meta property="og:image" content="https://www.cseye.net/nanum/assets/img/og.jpg"> -->
+  <!-- <meta property="og:image" content="https://www.cseye.net/nanum/assets/img/cover.jpg"> -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -99,7 +99,12 @@ function renderBlock(b, a) {
     case "p": return `<p>${esc(b.text)}</p>`;
     case "h": return `<h3>${esc(b.text)}</h3>`;
     case "quote": return `<blockquote><p>${esc(b.text)}</p>${b.by ? `<cite>${esc(b.by)}</cite>` : ""}</blockquote>`;
-    case "img": return `<figure><div class="ph-img" role="img" aria-label="${esc(b.alt)}"><span>사진 자리</span></div>${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+    case "img": {
+      const media = b.src
+        ? `<img src="${esc(b.src)}" alt="${esc(b.alt)}" width="${b.w}" height="${b.h}" loading="lazy" decoding="async">`
+        : `<div class="ph-img" role="img" aria-label="${esc(b.alt)}"><span>사진 자리</span></div>`;
+      return `<figure${b.h > b.w ? ' class="portrait"' : ""}>${media}${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+    }
     case "qa": return `<div class="qa"><p class="q">${esc(b.q)}</p><p class="a">${esc(b.a)}</p></div>`;
     case "list": return `<ul>${b.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`;
     case "timeline": return `<ol class="timeline">${b.items.map(i => `<li><time>${esc(i.date)}</time><p>${esc(i.text)}</p></li>`).join("")}</ol>`;
@@ -112,11 +117,28 @@ function renderBlock(b, a) {
   }
 }
 
+// ── 편지지 본문 (인사말) ── 상담·신청 안내 상자는 편지 밖, 서명 아래에 둠
+function buildLetter(a) {
+  const isCta = b => b.type === "consult" || b.type === "subscribe";
+  const render = list => list.map(b => renderBlock(b, a)).join("\n          ");
+  const ctas = a.blocks.filter(isCta);
+  return `<div class="letter-wrap"><div class="letter">
+        <div class="article-body">
+          <span class="letter-float a" aria-hidden="true"></span><span class="letter-float b" aria-hidden="true"></span>
+          ${render(a.blocks.filter(b => !isCta(b)))}
+          ${a.byline ? `<p class="letter-sign">${esc(a.byline)}</p>` : ""}
+        </div>
+        </div></div>${ctas.length ? `
+        <div class="article-body">
+          ${render(ctas)}
+        </div>` : ""}`;
+}
+
 // ── 메인 ──
 function buildIndex() {
   const card = a => `
           <a class="card" href="${page(a.id)}">
-            <div class="card-thumb" style="background:${esc(a.color)}"><span>${esc(TEMPLATE_LABEL[a.template])}</span></div>
+            <div class="card-thumb" style="background:${a.thumb ? `url('${esc(a.thumb)}') center / cover, ` : ""}${esc(a.color)}"><span>${esc(TEMPLATE_LABEL[a.template])}</span></div>
             <div class="card-body">
               <p class="card-kicker">${esc(a.kicker)}</p>
               <h3>${esc(a.title)}</h3>
@@ -139,12 +161,12 @@ function buildIndex() {
           <h3>${esc(a.title)}</h3>
         </a>`).join("");
   const main = `
-    <section class="cover">
+    <section class="cover" aria-label="표지: 눈송이와 민들레 홀씨가 날리는 수채화">
       <div class="wrap cover-inner">
         <p class="cover-label">${esc(ISSUE.label)}</p>
         <h1>${esc(ISSUE.title)}</h1>
         <p class="cover-issue">${esc(ISSUE.year)} · Vol.${esc(ISSUE.vol)}</p>
-        <a class="btn btn-light" href="${page("greeting")}">${esc(ISSUE.year)} 인사말 보러가기</a>
+        <a class="btn btn-primary" href="${page("greeting")}">${esc(ISSUE.year)} 인사말 보러가기</a>
       </div>
     </section>
     <section class="section">
@@ -181,9 +203,9 @@ function buildArticle(a, i) {
           <button type="button" class="tool" data-share="native">공유하기</button>
           <button type="button" class="tool" data-fontsize aria-pressed="false">글자 크게</button>
         </div>
-        <div class="article-body">
+        ${a.letter ? buildLetter(a) : `<div class="article-body">
           ${a.blocks.map(b => renderBlock(b, a)).join("\n          ")}
-        </div>
+        </div>`}
         <p class="article-note">※ 의학 정보는 참고용이며, 정확한 진단은 전문의 진료를 통해 받으세요.</p>
         <nav class="pager" aria-label="이전·다음 기사">
           ${prev ? `<a href="${page(prev.id)}"><small>이전 기사</small>${esc(prev.title)}</a>` : "<span></span>"}
@@ -325,7 +347,12 @@ ARTICLES.forEach(a => {
   if (ids.has(a.id)) throw new Error(`기사 ID 중복: ${a.id}`);
   if (["index", "consult", "subscribe", "archive"].includes(a.id)) throw new Error(`예약된 이름은 기사 ID로 쓸 수 없습니다: ${a.id}`);
   ids.add(a.id);
-  a.blocks.filter(b => b.type === "img").forEach(b => { if (!b.alt) throw new Error(`사진 대체텍스트(alt) 누락: ${a.id}`); });
+  a.blocks.filter(b => b.type === "img").forEach(b => {
+    if (!b.alt) throw new Error(`사진 대체텍스트(alt) 누락: ${a.id}`);
+    if (b.src && !(b.w && b.h)) throw new Error(`사진 크기(w, h) 누락: ${a.id} ${b.src}`);
+    if (b.src && !fs.existsSync(path.join(OUT, b.src))) throw new Error(`사진 파일 없음: ${a.id} ${b.src}`);
+  });
+  if (a.thumb && !fs.existsSync(path.join(OUT, a.thumb))) throw new Error(`썸네일 파일 없음: ${a.id} ${a.thumb}`);
 });
 
 fs.mkdirSync(path.join(OUT, "config"), { recursive: true });

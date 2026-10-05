@@ -69,10 +69,29 @@ button { font: inherit; cursor: pointer; }
 .tool.danger { color: var(--danger); border-color: currentColor; }
 
 /* Cover */
-.cover { background: linear-gradient(160deg, #1f3d58 0%, var(--issue) 60%, #8fbfd4 100%); color: #fff; padding: 96px 0 104px; text-align: center; }
-.cover-label { font-size: 1rem; letter-spacing: .12em; opacity: .85; }
-.cover h1 { font-size: clamp(2.4rem, 7vw, 4.6rem); font-weight: 800; margin: .1em 0 .2em; }
-.cover-issue { font-weight: 600; opacity: .85; margin-bottom: 32px; }
+/* 표지: 세로 일러스트(1481×2000)를 높이에 맞춰 오른쪽에 고정 → 아래(민들레)가 잘리지 않음.
+   남는 영역은 이미지 가장자리 색과 같은 그라데이션으로 채우고, 이미지 좌우 끝은 마스크로 흐리게 해 경계선이 보이지 않게 함 */
+.cover {
+  --cover-fade: linear-gradient(180deg, #e1f0f8 0%, #edf6f9 30%, #f2f9fb 50%, #f8fbfe 70%, #fefefe 100%);
+  position: relative; isolation: isolate; overflow: hidden;
+  background: var(--cover-fade);
+  color: var(--ink);
+  min-height: clamp(560px, 78vh, 820px);
+  display: flex; align-items: center;
+  padding: 72px 0;
+}
+.cover::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; right: max(0px, calc((100% - 1240px) / 2));
+  aspect-ratio: 1481 / 2000;
+  background: url("../img/cover.jpg") center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
+}
+.cover-label { font-size: 1rem; letter-spacing: .12em; color: var(--issue); font-weight: 600; }
+.cover h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 800; margin: .1em 0 .2em; color: #183a5a; }
+.cover-issue { font-weight: 600; color: var(--ink-soft); margin-bottom: 32px; }
+.cover h1, .cover-label, .cover-issue { text-shadow: 0 0 10px #fff, 0 0 18px rgba(255, 255, 255, .9); }
 
 /* Sections */
 .section { padding: 72px 0; }
@@ -122,6 +141,34 @@ button { font: inherit; cursor: pointer; }
 .article-body figure { margin: 2em 0; }
 .ph-img, .ph-video { aspect-ratio: 16 / 9; border-radius: 12px; background: repeating-linear-gradient(45deg, #ece5d9 0 12px, #f4efe6 12px 24px); display: grid; place-items: center; color: var(--ink-soft); font-size: .9rem; }
 .ph-video { background: #1f2a38; color: #fff; font-size: 2rem; }
+.article-body figure img { display: block; width: 100%; height: auto; border-radius: 12px; background: #e9eef2; }
+.article-body figure.portrait { max-width: 440px; margin-inline: auto; }
+/* 편지지 (인사말): 원본 1143×2000 이미지를 위(0~790)·가운데(790~1595, 무늬 한 주기 단위로 반복)·아래(1595~2000) 세 조각으로 나눠 붙임.
+   길이와 상관없이 테두리가 찌그러지지 않음. 1cqw = 원본 11.43px */
+.letter-wrap { container-type: inline-size; margin-bottom: 8px; }
+.letter {
+  position: relative;
+  min-height: 105cqw;
+  padding: 10cqw 7.5cqw 26cqw;
+  background:
+    url("../img/letter-top.jpg") center top / 100% auto no-repeat,
+    url("../img/letter-mid.jpg") 0 69.12cqw / 100% auto repeat-y,
+    #f3efe6;
+}
+/* 아래 조각: 윗부분을 흐리게 겹쳐 가운데 무늬와의 이음새를 감춤 */
+.letter::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 35.44cqw;
+  background: url("../img/letter-bottom.jpg") center bottom / 100% auto no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 22%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 22%);
+  pointer-events: none;
+}
+.letter .article-body { position: relative; z-index: 1; }
+/* 왼쪽 위 용을 글이 피해 가도록 하는 투명 자리 (몸통 → 머리 순) */
+.letter-float { float: left; clear: left; }
+.letter-float.a { width: 5.6cqw; height: 29.4cqw; }
+.letter-float.b { width: 19.3cqw; height: 28.4cqw; }
+.letter-sign { text-align: right; font-weight: 600; color: var(--ink-soft); margin-top: 2em; }
 figcaption { font-size: .88rem; color: var(--ink-soft); margin-top: 8px; }
 .tpl-photo .ph-img { aspect-ratio: 3 / 2; }
 .qa { margin: 1.6em 0; }
@@ -214,7 +261,15 @@ th { background: #f3eee5; font-weight: 600; }
   .brand { text-align: left; }
   .brand strong { font-size: 1.15rem; }
   .nav-inner { grid-template-columns: 1fr; gap: 20px; }
-  .cover { padding: 64px 0 72px; }
+  /* 모바일: 이미지 전체(가로 100%)가 보이도록 표지 비율을 이미지와 같게 → 아래가 잘리지 않음 */
+  .cover {
+    aspect-ratio: 1481 / 2000; min-height: 0;
+    align-items: flex-start; padding: 40px 0 0;
+  }
+  .cover::before { inset: 0; aspect-ratio: auto; -webkit-mask-image: none; mask-image: none; }
+  .cover-inner { max-width: 62%; margin-left: 16px; }
+  .cover h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
+  .cover-issue { margin-bottom: 20px; }
   .section { padding: 48px 0; }
   .grid { gap: 14px; }
   .card-body { padding: 14px 14px 16px; }
