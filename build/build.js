@@ -103,7 +103,9 @@ function renderBlock(b, a) {
       const media = b.src
         ? `<img src="${esc(b.src)}" alt="${esc(b.alt)}" width="${b.w}" height="${b.h}" loading="lazy" decoding="async">`
         : `<div class="ph-img" role="img" aria-label="${esc(b.alt)}"><span>사진 자리</span></div>`;
-      return `<figure${b.h > b.w ? ' class="portrait"' : ""}>${media}${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+      // 작은 사진은 원래 크기보다 늘리지 않음 (흐려짐 방지)
+      const small = b.src && b.w < 740 ? ` style="max-width:${b.w}px;margin-inline:auto"` : "";
+      return `<figure${b.h > b.w ? ' class="portrait"' : ""}${small}>${media}${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
     }
     case "qa": return `<div class="qa"><p class="q">${esc(b.q)}</p><p class="a">${esc(b.a)}</p></div>`;
     case "list": return `<ul>${b.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`;
