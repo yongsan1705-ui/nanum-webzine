@@ -265,7 +265,7 @@ function buildConsult() {
         <p class="lead">궁금하신 진료 분야와 연락 가능한 시간을 남겨 주시면 담당자가 연락드립니다. 급한 문의는 <a href="tel:027922226">02-792-2226</a>으로 전화 주세요.</p>
 
         <form class="form panel" data-form="consult" novalidate>
-          <p class="test-note demo-only" hidden>시연 모드입니다. 실제 정보 대신 "홍길동", "010-0000-0000" 같은 테스트 값을 입력하세요.</p>
+          <p class="test-note demo-only" hidden>연습용 화면입니다. 실제 정보 대신 "홍길동", "010-0000-0000" 같은 테스트 값을 입력하세요.</p>
           <label>이름 <span class="req">필수</span><input name="name" required maxlength="30" autocomplete="name"></label>
           <label>연락처 <span class="req">필수</span><input name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="010-0000-0000"></label>
           <label>관심 분야 <span class="req">필수</span>
@@ -318,7 +318,7 @@ function buildSubscribe() {
         <p class="lead">「${esc(ISSUE.title)}」 새 호가 발행되면 이메일로 알려 드립니다.</p>
 
         <form class="form panel" data-form="subscribe" novalidate>
-          <p class="test-note demo-only" hidden>시연 모드입니다. test@example.com 같은 테스트 주소를 입력하세요.</p>
+          <p class="test-note demo-only" hidden>연습용 화면입니다. 실제 이메일 대신 test@example.com 같은 테스트 주소를 입력하세요.</p>
           <label>이메일 <span class="req">필수</span><input name="email" type="email" required maxlength="100" autocomplete="email"></label>
           <label>이름 <span class="opt">선택</span><input name="name" maxlength="30" autocomplete="name"></label>
           <div class="hp" aria-hidden="true"><label>웹사이트 <input name="website" tabindex="-1" autocomplete="off"></label></div>
