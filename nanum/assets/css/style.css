@@ -1,5 +1,5 @@
-/* 글꼴: G마켓 산스 (본문 Medium, 제목·강조 Bold). 불러오기 전에는 Pretendard·시스템 글꼴로 표시 */
-@font-face { font-family: "GmarketSans"; font-weight: 500; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff"); }
+/* 글꼴: 제목(메인 타이틀)만 G마켓 산스 Bold, 본문·설명·소제목은 Pretendard.
+   G마켓 산스는 제목에만 쓰므로 Bold 한 가지만 불러옴 (불러오기 전에는 Pretendard로 표시) */
 @font-face { font-family: "GmarketSans"; font-weight: 700; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff"); }
 
 /* 호수마다 바꿀 수 있는 색은 --issue 하나뿐입니다. 나머지는 고정. */
@@ -14,7 +14,8 @@
   --danger: #b4412f;
   --radius: 16px;
   --shadow: 0 10px 28px rgba(22, 36, 58, .08);
-  --font: "GmarketSans", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-title: "GmarketSans", var(--font);
   font-size: 16px;
 }
 :root.large { font-size: 19px; }
@@ -25,6 +26,10 @@ body {
   line-height: 1.75; word-break: keep-all; -webkit-font-smoothing: antialiased;
 }
 h1, h2, h3 { line-height: 1.35; margin: 0 0 .5em; letter-spacing: -.02em; }
+/* 메인 타이틀: 페이지·기사 제목, 섹션 제목, 카드·특집의 기사 제목, 상단 로고 글자 */
+h1, h2, .brand strong, .card h3, .feature h3 { font-family: var(--font-title); font-weight: 700; letter-spacing: -.01em; }
+/* 글자 폭이 넓은 G마켓 산스로 긴 단어가 칸을 넘칠 때만 단어 중간에서 줄바꿈 */
+h1, h2, h3 { overflow-wrap: break-word; }
 p { margin: 0 0 1em; }
 a { color: inherit; }
 button { font: inherit; cursor: pointer; }
