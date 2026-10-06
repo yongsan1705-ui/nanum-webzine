@@ -111,7 +111,9 @@ function renderBlock(b, a) {
         ? `<img src="${esc(b.src)}" alt="${esc(b.alt)}" width="${b.w}" height="${b.h}" loading="lazy" decoding="async">`
         : `<div class="ph-img" role="img" aria-label="${esc(b.alt)}"><span>사진 자리</span></div>`;
       // 작은 사진은 원래 크기보다 늘리지 않음 (흐려짐 방지)
-      const small = b.src && b.w < 740 ? ` style="max-width:${b.w}px;margin-inline:auto"` : "";
+      // 세로 사진은 .portrait(440px) 제한이 있으므로, 그보다 작을 때만 원래 크기로 제한
+      const cap = b.h > b.w ? 440 : 740;
+      const small = b.src && b.w < cap ? ` style="max-width:${b.w}px;margin-inline:auto"` : "";
       return `<figure${b.h > b.w ? ' class="portrait"' : ""}${small}>${media}${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
     }
     case "qa": return `<div class="qa"><p class="q">${esc(b.q)}</p><p class="a">${esc(b.a)}</p></div>`;
@@ -362,6 +364,9 @@ ARTICLES.forEach(a => {
     if (b.src && !fs.existsSync(path.join(OUT, b.src))) throw new Error(`사진 파일 없음: ${a.id} ${b.src}`);
   });
   if (a.thumb && !fs.existsSync(path.join(OUT, a.thumb))) throw new Error(`썸네일 파일 없음: ${a.id} ${a.thumb}`);
+  a.blocks.filter(b => b.type === "h" && b.flag).forEach(b => {
+    if (!fs.existsSync(path.join(OUT, "assets/img/flags", `${b.flag}.svg`))) throw new Error(`국기 파일 없음: ${a.id} flags/${b.flag}.svg`);
+  });
 });
 
 fs.mkdirSync(path.join(OUT, "config"), { recursive: true });
