@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS consults (
   phone         VARCHAR(20)  NOT NULL,
   field         VARCHAR(20)  NOT NULL,
   message       VARCHAR(500),
-  agree_sensitive TINYINT(1) NOT NULL DEFAULT 0,
   article       VARCHAR(40),
   source        VARCHAR(60),
   agree_privacy TINYINT(1)   NOT NULL DEFAULT 0,

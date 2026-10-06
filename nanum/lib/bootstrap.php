@@ -101,7 +101,7 @@ function clean_text($s, int $max): string
     return mb_substr($s, 0, $max, 'UTF-8');
 }
 
-// 여러 줄 글(상담 내용): 줄바꿈만 남기고 나머지 제어문자 제거
+// 여러 줄 글(문의 내용): 줄바꿈만 남기고 나머지 제어문자 제거
 function clean_multiline($s, int $max): string
 {
     $s = str_replace(["\r\n", "\r"], "\n", strip_tags((string) $s));

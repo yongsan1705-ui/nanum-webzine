@@ -79,7 +79,7 @@
     }
     if (isSupabase) {
       const row = kind === "consult"
-        ? { name: data.name, phone: data.phone, field: data.field, message: data.message || null, agree_sensitive: data.agree_sensitive, article: data.article, source: data.source, agree_privacy: true }
+        ? { name: data.name, phone: data.phone, field: data.field, message: data.message || null, article: data.article, source: data.source, agree_privacy: true }
         : { email: data.email, name: data.name || null, article: data.article, source: data.source, agree_privacy: true, agree_marketing: true };
       try {
         return (await sbInsert(kind === "consult" ? "consults" : "subscribers", row))
@@ -198,9 +198,8 @@
       if (!f.name.value.trim()) return "이름을 입력해 주세요.";
       if (!/^[0-9\-\s]{9,14}$/.test(f.phone.value.trim())) return "연락처를 숫자로 입력해 주세요. (예: 010-0000-0000)";
       if (!f.field.value) return "관심 진료과목을 선택해 주세요.";
-      if (f.message.value.trim().length > 500) return "상담 내용은 500자 이내로 적어 주세요.";
+      if (f.message.value.trim().length > 500) return "문의 내용은 500자 이내로 적어 주세요.";
       if (!f.agree_privacy.checked) return "개인정보 수집·이용에 동의해 주세요.";
-      if (f.message.value.trim() && !f.agree_sensitive.checked) return "상담 내용을 적으셨다면 민감정보 수집·이용에 동의해 주세요. (동의하지 않으려면 상담 내용을 비워 주세요)";
     },
     subscribe(f) {
       if (!f.email.value || !f.email.checkValidity()) return "올바른 이메일 주소를 입력해 주세요.";
@@ -209,10 +208,7 @@
     }
   };
   const collect = {
-    consult: f => {
-      const message = f.message.value.trim();
-      return { name: f.name.value.trim(), phone: f.phone.value.trim(), field: f.field.value, message, agree_sensitive: !!message && f.agree_sensitive.checked, agree_privacy: true };
-    },
+    consult: f => ({ name: f.name.value.trim(), phone: f.phone.value.trim(), field: f.field.value, message: f.message.value.trim(), agree_privacy: true }),
     subscribe: f => ({ email: f.email.value.trim().toLowerCase(), name: f.name.value.trim(), agree_privacy: true, agree_marketing: true, marketing: true })
   };
 

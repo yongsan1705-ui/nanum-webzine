@@ -51,7 +51,7 @@
         ${rows.map(r => `<tr><td><a href="../nanum/${r.a.id}.html">${esc(r.a.kicker)}</a></td><td>${r.views}</td><td>${fmt(r.dwell)}</td><td>${r.reach}%</td><td>${r.click}</td><td>${r.submit}</td><td>${r.sub}</td><td>${r.share}</td></tr>`).join("")}
       </tbody></table></div>
       <h2>유입 경로</h2>${Object.keys(sources).length ? `<ul class="sources">${Object.entries(sources).sort((a, b) => b[1] - a[1]).map(([s, n]) => `<li><span>${esc(s)}</span><b>${n}</b></li>`).join("")}</ul>` : `<p class="muted">아직 데이터가 없습니다.</p>`}
-      <h2>상담 신청 (${d.consults.length}건)</h2>${d.consults.length ? `<div class="table-wrap"><table><thead><tr><th>접수 시각</th><th>이름</th><th>연락처</th><th>관심 진료과목</th><th>상담 내용</th><th>신청 기사</th><th>유입</th></tr></thead><tbody>
+      <h2>상담 신청 (${d.consults.length}건)</h2>${d.consults.length ? `<div class="table-wrap"><table><thead><tr><th>접수 시각</th><th>이름</th><th>연락처</th><th>관심 진료과목</th><th>문의 내용</th><th>신청 기사</th><th>유입</th></tr></thead><tbody>
         ${d.consults.slice().reverse().map(c => `<tr><td>${time(c.ts)}</td><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.field)}</td><td class="msg">${esc(c.message || "-")}</td><td>${esc(label(c.article))}</td><td>${esc(c.source)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">접수 내역이 없습니다.</p>`}
       <h2>웹진 신청 (${d.subscribers.length}명)</h2>${d.subscribers.length ? `<div class="table-wrap"><table><thead><tr><th>신청 시각</th><th>이메일</th><th>이름</th><th>신청 기사</th></tr></thead><tbody>
         ${d.subscribers.slice().reverse().map(s => `<tr><td>${time(s.ts)}</td><td>${esc(s.email)}</td><td>${esc(s.name || "-")}</td><td>${esc(label(s.article))}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">신청 내역이 없습니다.</p>`}
