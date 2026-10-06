@@ -25,6 +25,10 @@ const TEMPLATE_LABEL = { column: "칼럼", interview: "인터뷰", photo: "포�
 const page = id => `${id}.html`;
 const SITE = `${ISSUE.label} ${ISSUE.title}`;
 
+// 연습 기간(GitHub Pages 공개 중)에는 검색엔진에 노출되지 않게 막음.
+// 실제 운영 서버(www.cseye.net/nanum/)에 올릴 때 false로 바꾸고 다시 빌드할 것.
+const NOINDEX = true;
+
 // ── 공통 틀 ──
 function layout({ title, description, article = "", main, bodyClass = "" }) {
   return `<!doctype html>
@@ -33,7 +37,8 @@ function layout({ title, description, article = "", main, bodyClass = "" }) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)}</title>
-  <meta name="description" content="${esc(description)}">
+  <meta name="description" content="${esc(description)}">${NOINDEX ? `
+  <meta name="robots" content="noindex, nofollow">` : ""}
   <meta property="og:type" content="website">
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
