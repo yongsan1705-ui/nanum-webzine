@@ -1,0 +1,13 @@
+# Vercel 배포 범위: 웹진(nanum/)의 화면 파일과 첫 화면 index.html만 올림.
+# 시제품(_prototype)·시연 DB(_preview)·원고 생성기(build)·서버용 PHP는 공개 사이트에 올리지 않음.
+/*
+!/index.html
+!/nanum
+/nanum/admin
+/nanum/api
+/nanum/config
+/nanum/lib
+/nanum/sql
+/nanum/data
+**/.htaccess
+**/.vercelignore
