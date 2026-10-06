@@ -365,7 +365,7 @@ const ids = new Set();
 ARTICLES.forEach(a => {
   if (!/^[a-z0-9-]+$/.test(a.id)) throw new Error(`기사 ID는 영문 소문자·숫자·-만 쓸 수 있습니다: ${a.id}`);
   if (ids.has(a.id)) throw new Error(`기사 ID 중복: ${a.id}`);
-  if (["index", "consult", "subscribe", "archive"].includes(a.id)) throw new Error(`예약된 이름은 기사 ID로 쓸 수 없습니다: ${a.id}`);
+  if (["index", "consult", "subscribe", "archive", "demo-db"].includes(a.id)) throw new Error(`예약된 이름은 기사 ID로 쓸 수 없습니다: ${a.id}`);
   ids.add(a.id);
   a.blocks.filter(b => b.type === "img").forEach(b => {
     if (!b.alt) throw new Error(`사진 대체텍스트(alt) 누락: ${a.id}`);
@@ -395,5 +395,17 @@ return [
 `
 };
 ARTICLES.forEach((a, i) => { files[page(a.id)] = buildArticle(a, i); });
+
+// 시연 모드에서만: 이 브라우저에 쌓인 신청·통계를 보는 화면(demo-db.html)을 웹진과 같은 주소에 만듦.
+// (브라우저 저장 데이터는 사이트 주소별로 따로 보관되므로 웹진 안에 있어야 보임) 서버 모드로 바꾸면 자동으로 지움.
+const isDemoMode = /mode:\s*"demo"/.test(fs.readFileSync(path.join(OUT, "assets/js/config.js"), "utf8"));
+const demoDbPath = path.join(OUT, "demo-db.html");
+if (isDemoMode) {
+  const list = JSON.stringify(ARTICLES.map(a => ({ id: a.id, kicker: a.kicker }))).replace(/</g, "\\u003c");
+  files["demo-db.html"] = fs.readFileSync(path.join(__dirname, "..", "_preview", "db-demo.html"), "utf8")
+    .replace('<script src="../build/data.js"></script>', `<script>const ARTICLES = ${list};</script>`)
+    .replace('href="../nanum/assets/css/style.css"', `href="${asset("assets/css/style.css")}"`)
+    .replace(/\.\.\/nanum\//g, "");
+} else if (fs.existsSync(demoDbPath)) fs.unlinkSync(demoDbPath);
 for (const [name, html] of Object.entries(files)) fs.writeFileSync(path.join(OUT, name), html);
 console.log(`생성 완료: ${Object.keys(files).length}개 파일 → ${OUT}`);
