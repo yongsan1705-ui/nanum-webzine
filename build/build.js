@@ -262,38 +262,42 @@ function buildConsult() {
       <div class="wrap narrow">
         <p class="article-kicker">상담 신청</p>
         <h1 class="page-title">상담받기</h1>
-        <p class="lead">궁금하신 진료 분야와 연락 가능한 시간을 남겨 주시면 담당자가 연락드립니다. 급한 문의는 <a href="tel:027922226">02-792-2226</a>으로 전화 주세요.</p>
+        <p class="lead">궁금하신 진료과목과 연락처를 남겨 주시면 담당자가 연락드립니다. 급한 문의는 <a href="tel:027922226">02-792-2226</a>으로 전화 주세요.</p>
 
         <form class="form panel" data-form="consult" novalidate>
           <p class="test-note demo-only" hidden>연습용 화면입니다. 실제 정보 대신 "홍길동", "010-0000-0000" 같은 테스트 값을 입력하세요.</p>
           <label>이름 <span class="req">필수</span><input name="name" required maxlength="30" autocomplete="name"></label>
           <label>연락처 <span class="req">필수</span><input name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="010-0000-0000"></label>
-          <label>관심 분야 <span class="req">필수</span>
+          <label>관심 진료과목 <span class="req">필수</span>
             <select name="field" required>
               <option value="">선택해 주세요</option>
 ${CONSULT_FIELDS.map(f => `              <option>${esc(f)}</option>`).join("\n")}
             </select>
           </label>
-          <label>희망 연락 시간 <span class="req">필수</span>
-            <select name="time" required>
-              <option value="">선택해 주세요</option>
-              <option>오전 (9~12시)</option>
-              <option>오후 (12~18시)</option>
-              <option>무관</option>
-            </select>
+          <label>상담 내용 <span class="opt">선택</span>
+            <textarea name="message" rows="5" maxlength="500" placeholder="궁금하신 점을 자유롭게 적어 주세요. (500자 이내)"></textarea>
           </label>
-          <p class="hint">증상이나 진료 기록은 적지 않으셔도 됩니다. 자세한 내용은 상담 전화로 안내드립니다.</p>
+          <p class="hint">증상·진료 기록 같은 건강 정보는 꼭 필요한 만큼만 적어 주세요. 자세한 내용은 상담 전화로 안내드립니다.</p>
           <div class="hp" aria-hidden="true"><label>웹사이트 <input name="website" tabindex="-1" autocomplete="off"></label></div>
           <div class="notice-box">
             <strong>개인정보 수집·이용 안내</strong>
             <ul>
               <li>수집 목적: 상담 요청 확인 및 연락</li>
-              <li>수집 항목: 이름, 연락처, 관심 분야, 희망 연락 시간</li>
+              <li>수집 항목: 이름, 연락처, 관심 진료과목, 상담 내용(선택)</li>
               <li>보유 기간: [상담 완료 후 ○개월, 법무 확인 필요]</li>
               <li>동의를 거부할 수 있으며, 거부 시 상담 신청이 제한됩니다.</li>
             </ul>
           </div>
           <label class="check"><input type="checkbox" name="agree_privacy" required> (필수) 개인정보 수집·이용에 동의합니다</label>
+          <div class="notice-box">
+            <strong>민감정보(건강 정보) 수집·이용 안내 <small>[문구 법무 확인 필요]</small></strong>
+            <ul>
+              <li>상담 내용에 증상 등 건강 정보를 적으시는 경우에만 해당합니다.</li>
+              <li>수집 목적: 상담 내용 확인 및 안내 / 보유 기간: 위와 같음</li>
+              <li>동의하지 않으셔도 상담 내용을 비워 두고 신청하실 수 있습니다.</li>
+            </ul>
+          </div>
+          <label class="check"><input type="checkbox" name="agree_sensitive"> (상담 내용을 적은 경우 필수) 민감정보 수집·이용에 동의합니다</label>
           <p class="form-error" role="alert"></p>
           <button class="btn btn-primary" type="submit">상담 신청</button>
         </form>
@@ -332,6 +336,15 @@ function buildSubscribe() {
             </ul>
           </div>
           <label class="check"><input type="checkbox" name="agree_privacy" required> (필수) 개인정보 수집·이용에 동의합니다</label>
+          <div class="notice-box">
+            <strong>민감정보(건강 정보) 수집·이용 안내 <small>[문구 법무 확인 필요]</small></strong>
+            <ul>
+              <li>상담 내용에 증상 등 건강 정보를 적으시는 경우에만 해당합니다.</li>
+              <li>수집 목적: 상담 내용 확인 및 안내 / 보유 기간: 위와 같음</li>
+              <li>동의하지 않으셔도 상담 내용을 비워 두고 신청하실 수 있습니다.</li>
+            </ul>
+          </div>
+          <label class="check"><input type="checkbox" name="agree_sensitive"> (상담 내용을 적은 경우 필수) 민감정보 수집·이용에 동의합니다</label>
           <label class="check"><input type="checkbox" name="agree_marketing" required> (필수) 소식지·병원 소식 이메일 수신에 동의합니다</label>
           <p class="hint">구독 해지는 받으신 메일 하단 또는 <a href="tel:027922226">02-792-2226</a>으로 요청하실 수 있습니다.</p>
           <p class="form-error" role="alert"></p>
@@ -390,7 +403,6 @@ const files = {
 // 상담 폼 선택지 (서버 검증용) — 웹진 화면의 선택지와 같아야 합니다.
 return [
   'consult_fields' => [${CONSULT_FIELDS.map(f => `'${f.replace(/'/g, "\\'")}'`).join(", ")}],
-  'contact_times' => ['오전 (9~12시)', '오후 (12~18시)', '무관'],
 ];
 `
 };

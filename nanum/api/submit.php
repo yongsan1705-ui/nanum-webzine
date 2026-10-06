@@ -73,17 +73,18 @@ try {
         $name  = clean_text($in['name'] ?? '', 30);
         $phone = clean_text($in['phone'] ?? '', 20);
         $field = (string) ($in['field'] ?? '');
-        $time  = (string) ($in['time'] ?? '');
+        $message = clean_multiline($in['message'] ?? '', 500);
+        $sensitive = $message !== '' && ($in['agree_sensitive'] ?? false) === true;
         if ($name === '') reply(400, ['ok' => false, 'error' => '이름을 입력해 주세요.']);
         if (!preg_match('/^[0-9\-\s]{9,14}$/', $phone)) reply(400, ['ok' => false, 'error' => '연락처를 숫자로 입력해 주세요.']);
-        if (!in_array($field, $OPTIONS['consult_fields'], true)) reply(400, ['ok' => false, 'error' => '관심 분야를 선택해 주세요.']);
-        if (!in_array($time, $OPTIONS['contact_times'], true)) reply(400, ['ok' => false, 'error' => '희망 연락 시간을 선택해 주세요.']);
+        if (!in_array($field, $OPTIONS['consult_fields'], true)) reply(400, ['ok' => false, 'error' => '관심 진료과목을 선택해 주세요.']);
         if (($in['agree_privacy'] ?? false) !== true) reply(400, ['ok' => false, 'error' => '개인정보 수집·이용에 동의해 주세요.']);
+        if ($message !== '' && !$sensitive) reply(400, ['ok' => false, 'error' => '상담 내용을 적으셨다면 민감정보 수집·이용에 동의해 주세요.']);
 
         $t = now();
-        db()->prepare('INSERT INTO consults (name, phone, field, contact_time, article, source, agree_privacy, agreed_at, status, created_at)
-                       VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?)')
-            ->execute([$name, $phone, $field, $time, $article, $source, $t, '접수', $t]);
+        db()->prepare('INSERT INTO consults (name, phone, field, message, agree_sensitive, article, source, agree_privacy, agreed_at, status, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)')
+            ->execute([$name, $phone, $field, $message === '' ? null : $message, $sensitive ? 1 : 0, $article, $source, $t, '접수', $t]);
         reply(200, ['ok' => true]);
     }
 

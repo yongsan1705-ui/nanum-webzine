@@ -103,7 +103,7 @@
           api("totals?select=*"),
           api("article_stats?select=*"),
           api("source_stats?select=*&order=views.desc"),
-          api("consults?select=created_at,name,phone,field,contact_time,article,source,status&order=created_at.desc&limit=500"),
+          api("consults?select=created_at,name,phone,field,message,article,source,status&order=created_at.desc&limit=500"),
           api("subscribers?select=created_at,email,name,article,unsubscribed_at&order=created_at.desc&limit=500")
         ]);
         who.innerHTML = `${esc(getSession()?.email)} <button class="tool" id="logout" type="button">로그아웃</button>`;
@@ -124,8 +124,8 @@
             ${rows.map(({ a, s }) => `<tr><td><a href="${esc(a.id)}.html">${esc(a.kicker)}</a></td><td>${s.views || 0}</td><td>${fmt(s.avg_dwell)}</td><td>${s.views ? Math.round(s.reached / s.views * 100) : 0}%</td><td>${s.consult_clicks || 0}</td><td>${s.consult_submits || 0}</td><td>${s.subscribes || 0}</td><td>${s.shares || 0}</td></tr>`).join("")}
           </tbody></table></div>
           <h2>유입 경로</h2>${sources.length ? `<ul class="sources">${sources.map(s => `<li><span>${esc(s.source)}</span><b>${s.views}</b></li>`).join("")}</ul>` : `<p class="muted">아직 데이터가 없습니다.</p>`}
-          <h2>상담 신청 (${t.consults}건${t.consults > 500 ? ", 최근 500건 표시" : ""})</h2>${consults.length ? `<div class="table-wrap"><table><thead><tr><th>접수 시각</th><th>이름</th><th>연락처</th><th>관심 분야</th><th>희망 시간</th><th>신청 기사</th><th>유입</th><th>상태</th></tr></thead><tbody>
-            ${consults.map(c => `<tr><td>${time(c.created_at)}</td><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.field)}</td><td>${esc(c.contact_time)}</td><td>${esc(label(c.article))}</td><td>${esc(c.source)}</td><td>${esc(c.status)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">접수 내역이 없습니다.</p>`}
+          <h2>상담 신청 (${t.consults}건${t.consults > 500 ? ", 최근 500건 표시" : ""})</h2>${consults.length ? `<div class="table-wrap"><table><thead><tr><th>접수 시각</th><th>이름</th><th>연락처</th><th>관심 진료과목</th><th>상담 내용</th><th>신청 기사</th><th>유입</th><th>상태</th></tr></thead><tbody>
+            ${consults.map(c => `<tr><td>${time(c.created_at)}</td><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.field)}</td><td class="msg">${esc(c.message || "-")}</td><td>${esc(label(c.article))}</td><td>${esc(c.source)}</td><td>${esc(c.status)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">접수 내역이 없습니다.</p>`}
           <h2>웹진 신청 (${t.subscribers}명${subs.length >= 500 ? ", 최근 500건 표시" : ""})</h2>${subs.length ? `<div class="table-wrap"><table><thead><tr><th>신청 시각</th><th>이메일</th><th>이름</th><th>신청 기사</th><th>상태</th></tr></thead><tbody>
             ${subs.map(s => `<tr><td>${time(s.created_at)}</td><td>${esc(s.email)}</td><td>${esc(s.name || "-")}</td><td>${esc(label(s.article))}</td><td>${s.unsubscribed_at ? "해지" : "구독 중"}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">신청 내역이 없습니다.</p>`}
           <p class="muted">상담 처리 상태·메모 수정, 삭제는 Supabase 관리 화면 > Table Editor에서 할 수 있습니다.</p>`;

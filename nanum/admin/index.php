@@ -79,8 +79,8 @@ if ($act === 'export' && $isPost) {
     csrf_check();
     $what = (string) ($_GET['what'] ?? '');
     $sets = [
-        'consults'    => ['SELECT id, created_at, name, phone, field, contact_time, article, source, status, memo, agreed_at FROM consults ORDER BY id DESC',
-                          ['번호', '접수 시각', '이름', '연락처', '관심 분야', '희망 연락 시간', '신청 기사', '유입 경로', '상태', '메모', '개인정보 동의 시각']],
+        'consults'    => ['SELECT id, created_at, name, phone, field, message, agree_sensitive, article, source, status, memo, agreed_at FROM consults ORDER BY id DESC',
+                          ['번호', '접수 시각', '이름', '연락처', '관심 진료과목', '상담 내용', '민감정보 동의', '신청 기사', '유입 경로', '상태', '메모', '개인정보 동의 시각']],
         'subscribers' => ['SELECT id, created_at, email, name, article, source, agreed_at FROM subscribers WHERE unsubscribed_at IS NULL ORDER BY id DESC',
                           ['번호', '신청 시각', '이메일', '이름', '신청 기사', '유입 경로', '동의 시각']],
         'events'      => ['SELECT created_at, type, article, value, source, view_id FROM events ORDER BY id DESC',
@@ -304,12 +304,12 @@ if ($p === 'consults') {
         . '</div></div><nav class="admin-tabs" aria-label="상태">' . $filter . '</nav>';
     if (!$list) $html .= '<p class="muted">접수 내역이 없습니다.</p>';
     else {
-        $html .= '<div class="table-wrap"><table><thead><tr><th>번호</th><th>접수 시각</th><th>이름</th><th>연락처</th><th>관심 분야</th><th>희망 시간</th><th>신청 기사</th><th>상태·메모</th><th></th></tr></thead><tbody>';
+        $html .= '<div class="table-wrap"><table><thead><tr><th>번호</th><th>접수 시각</th><th>이름</th><th>연락처</th><th>관심 진료과목</th><th>상담 내용</th><th>신청 기사</th><th>상태·메모</th><th></th></tr></thead><tbody>';
         foreach ($list as $c) {
             $opts = '';
             foreach ($STATUSES as $s) $opts .= '<option' . ($s === $c['status'] ? ' selected' : '') . '>' . h($s) . '</option>';
             $html .= '<tr><td>' . (int) $c['id'] . '</td><td>' . h($c['created_at']) . '</td><td>' . h($c['name']) . '</td><td><a href="tel:' . h(preg_replace('/\D/', '', $c['phone'])) . '">' . h($c['phone']) . '</a></td>'
-                . '<td>' . h($c['field']) . '</td><td>' . h($c['contact_time']) . '</td><td>' . h(article_label($c['article'])) . '</td>'
+                . '<td>' . h($c['field']) . '</td><td class="msg">' . h((string) $c['message']) . '</td><td>' . h(article_label($c['article'])) . '</td>'
                 . '<td><form class="inline-form" method="post" action="index.php?a=consult_status">' . csrf_field() . '<input type="hidden" name="id" value="' . (int) $c['id'] . '">'
                 . '<select name="status">' . $opts . '</select> <input name="memo" value="' . h($c['memo']) . '" maxlength="200" placeholder="메모" size="12"> <button class="tool" type="submit">저장</button></form></td>'
                 . '<td><form class="inline-form" method="post" action="index.php?a=consult_delete"' . $confirm('상담 #' . (int) $c['id'] . '를 삭제할까요? 되돌릴 수 없습니다.') . '>' . csrf_field()

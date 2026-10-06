@@ -101,6 +101,15 @@ function clean_text($s, int $max): string
     return mb_substr($s, 0, $max, 'UTF-8');
 }
 
+// 여러 줄 글(상담 내용): 줄바꿈만 남기고 나머지 제어문자 제거
+function clean_multiline($s, int $max): string
+{
+    $s = str_replace(["\r\n", "\r"], "\n", strip_tags((string) $s));
+    $s = preg_replace('/[\x00-\x09\x0B-\x1F\x7F]/u', '', $s);
+    $s = preg_replace("/\n{3,}/", "\n\n", trim($s));
+    return mb_substr($s, 0, $max, 'UTF-8');
+}
+
 function article_label(?string $id): string
 {
     global $ARTICLES;

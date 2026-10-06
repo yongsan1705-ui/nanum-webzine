@@ -270,7 +270,9 @@ th { background: #f3eee5; font-weight: 600; }
 .form h2 { margin: 0; font-size: 1.4rem; }
 .form p { margin: 0; }
 .form label { display: grid; gap: 6px; font-weight: 600; font-size: .92rem; }
-.form input:not([type=checkbox]), .form select { font: inherit; font-weight: 400; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.form textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+td.msg { white-space: pre-wrap; min-width: 180px; max-width: 320px; }
+.form input:not([type=checkbox]), .form select, .form textarea { font: inherit; font-weight: 400; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
 .form .check { display: flex; gap: 8px; align-items: flex-start; font-weight: 500; }
 .form .check input { margin-top: 5px; width: 18px; height: 18px; }
 .test-note { background: #fff3cd; color: #6b4e00; font-size: .82rem; padding: 8px 12px; border-radius: 8px; }
@@ -340,7 +342,7 @@ th { background: #f3eee5; font-weight: 600; }
 .form-section .page-title { margin-bottom: 12px; }
 .lead { color: var(--ink-soft); font-size: 1.05rem; margin-bottom: 28px; }
 .panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; }
-.form .req, .form .opt { font-size: .75rem; font-weight: 700; margin-left: 4px; padding: 1px 6px; border-radius: 4px; }
+.form .req, .form .opt { justify-self: start; font-size: .75rem; font-weight: 700; margin-left: 4px; padding: 1px 6px; border-radius: 4px; }
 .form .req { color: var(--danger); background: #fbe9e5; }
 .form .opt { color: var(--ink-soft); background: #eee8de; }
 .hint { font-size: .85rem; color: var(--ink-soft); }
