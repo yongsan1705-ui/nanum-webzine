@@ -29,6 +29,10 @@ const SITE = `${ISSUE.label} ${ISSUE.title}`;
 // 실제 운영 서버(www.cseye.net/nanum/)에 올릴 때 false로 바꾸고 다시 빌드할 것.
 const NOINDEX = true;
 
+// CSS·JS 주소 뒤에 파일 내용 기준 버전을 붙여, 고친 뒤에도 방문자 브라우저가 예전 파일을 쓰지 않게 함
+const ver = f => require("crypto").createHash("md5").update(fs.readFileSync(path.join(OUT, f))).digest("hex").slice(0, 8);
+const asset = f => `${f}?v=${ver(f)}`;
+
 // ── 공통 틀 ──
 function layout({ title, description, article = "", main, bodyClass = "" }) {
   return `<!doctype html>
@@ -45,7 +49,7 @@ function layout({ title, description, article = "", main, bodyClass = "" }) {
   <!-- OG 이미지: 대표 이미지가 정해지면 주석을 풀고 경로 입력 -->
   <!-- <meta property="og:image" content="https://www.cseye.net/nanum/assets/img/cover.jpg"> -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="${asset("assets/css/style.css")}">
 </head>
 <body${article ? ` data-article="${esc(article)}"` : ""}${bodyClass ? ` class="${bodyClass}"` : ""}>
   <a class="skip" href="#main">본문 바로가기</a>
@@ -62,8 +66,14 @@ function layout({ title, description, article = "", main, bodyClass = "" }) {
         <span></span><span></span><span></span>
       </button>
     </div>
-    <nav id="nav" class="nav" aria-label="목차">
-      <div class="wrap nav-inner">
+  </header>
+  <div class="nav-backdrop" hidden></div>
+  <nav id="nav" class="nav" aria-label="목차">
+      <div class="nav-inner">
+        <div class="nav-head">
+          <strong>목차</strong>
+          <button class="nav-close" type="button" aria-label="메뉴 닫기">×</button>
+        </div>
         <ol class="toc">
 ${ARTICLES.map(a => `          <li><a href="${page(a.id)}"${a.id === article ? ' aria-current="page"' : ""}>${esc(a.kicker)}</a></li>`).join("\n")}
         </ol>
@@ -73,8 +83,7 @@ ${ARTICLES.map(a => `          <li><a href="${page(a.id)}"${a.id === article ? '
           <a href="consult.html" class="primary" data-track="consult_click">상담받기</a>
         </div>
       </div>
-    </nav>
-  </header>
+  </nav>
 
   <main id="main" tabindex="-1">
 ${main}
@@ -91,8 +100,8 @@ ${main}
   ${bodyClass.includes("form-page") ? "" : `<a class="fab" href="consult.html${article ? `?from=${esc(article)}` : ""}" data-track="consult_click">상담받기</a>`}
   <div class="toast" role="status" aria-live="polite"></div>
 
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/site.js"></script>
+  <script src="${asset("assets/js/config.js")}"></script>
+  <script src="${asset("assets/js/site.js")}"></script>
 </body>
 </html>
 `;
@@ -175,7 +184,7 @@ function buildIndex() {
     <section class="cover" aria-label="표지: 눈송이와 민들레 홀씨가 날리는 수채화">
       <div class="wrap cover-inner">
         <p class="cover-label">${esc(ISSUE.label)}</p>
-        <h1>${esc(ISSUE.title)}</h1>
+        <h1 class="cover-title"><img src="assets/img/title-logo.svg" alt="${esc(ISSUE.title)}" width="380" height="214"></h1>
         <p class="cover-issue">${esc(ISSUE.year)} · Vol.${esc(ISSUE.vol)}</p>
         <a class="btn btn-primary" href="${page("greeting")}">${esc(ISSUE.year)} 인사말 보러가기</a>
       </div>

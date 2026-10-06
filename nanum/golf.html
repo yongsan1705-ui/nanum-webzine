@@ -12,7 +12,7 @@
   <!-- OG 이미지: 대표 이미지가 정해지면 주석을 풀고 경로 입력 -->
   <!-- <meta property="og:image" content="https://www.cseye.net/nanum/assets/img/cover.jpg"> -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=08d15c83">
 </head>
 <body data-article="golf">
   <a class="skip" href="#main">본문 바로가기</a>
@@ -29,8 +29,14 @@
         <span></span><span></span><span></span>
       </button>
     </div>
-    <nav id="nav" class="nav" aria-label="목차">
-      <div class="wrap nav-inner">
+  </header>
+  <div class="nav-backdrop" hidden></div>
+  <nav id="nav" class="nav" aria-label="목차">
+      <div class="nav-inner">
+        <div class="nav-head">
+          <strong>목차</strong>
+          <button class="nav-close" type="button" aria-label="메뉴 닫기">×</button>
+        </div>
         <ol class="toc">
           <li><a href="greeting.html">인사말</a></li>
           <li><a href="issue.html">이슈 칼럼</a></li>
@@ -55,8 +61,7 @@
           <a href="consult.html" class="primary" data-track="consult_click">상담받기</a>
         </div>
       </div>
-    </nav>
-  </header>
+  </nav>
 
   <main id="main" tabindex="-1">
 
@@ -107,7 +112,7 @@
   <a class="fab" href="consult.html?from=golf" data-track="consult_click">상담받기</a>
   <div class="toast" role="status" aria-live="polite"></div>
 
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/site.js"></script>
+  <script src="assets/js/config.js?v=1151e516"></script>
+  <script src="assets/js/site.js?v=4eb5ea6d"></script>
 </body>
 </html>

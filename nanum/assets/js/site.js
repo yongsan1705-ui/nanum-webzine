@@ -98,11 +98,22 @@
   }
 
   // ── 메뉴 ──
+  // 오른쪽에서 밀려 나오는 목차. 바깥(배경)·닫기 버튼·Esc로 닫고, 닫으면 메뉴 버튼으로 초점을 돌려줌
   const toggle = document.querySelector(".menu-toggle"), nav = document.getElementById("nav");
-  toggle?.addEventListener("click", () => {
-    const open = nav.classList.toggle("is-open");
-    toggle.setAttribute("aria-expanded", String(open));
-  });
+  const backdrop = document.querySelector(".nav-backdrop");
+  const setMenu = open => {
+    if (!nav) return;
+    nav.classList.toggle("is-open", open);
+    if (backdrop) backdrop.hidden = !open;
+    document.documentElement.classList.toggle("nav-locked", open);
+    toggle?.setAttribute("aria-expanded", String(open));
+    if (open) nav.querySelector(".nav-close")?.focus();
+    else toggle?.focus();
+  };
+  toggle?.addEventListener("click", () => setMenu(!nav.classList.contains("is-open")));
+  nav?.querySelector(".nav-close")?.addEventListener("click", () => setMenu(false));
+  backdrop?.addEventListener("click", () => setMenu(false));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && nav?.classList.contains("is-open")) setMenu(false); });
 
   // ── 토스트 ──
   const toastEl = document.querySelector(".toast");

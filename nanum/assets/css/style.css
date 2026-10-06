@@ -1,3 +1,7 @@
+/* 글꼴: G마켓 산스 (본문 Medium, 제목·강조 Bold). 불러오기 전에는 Pretendard·시스템 글꼴로 표시 */
+@font-face { font-family: "GmarketSans"; font-weight: 500; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff"); }
+@font-face { font-family: "GmarketSans"; font-weight: 700; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff"); }
+
 /* 호수마다 바꿀 수 있는 색은 --issue 하나뿐입니다. 나머지는 고정. */
 :root {
   --issue: #2f6f93;
@@ -10,7 +14,7 @@
   --danger: #b4412f;
   --radius: 16px;
   --shadow: 0 10px 28px rgba(22, 36, 58, .08);
-  --font: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font: "GmarketSans", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   font-size: 16px;
 }
 :root.large { font-size: 19px; }
@@ -47,20 +51,33 @@ button { font: inherit; cursor: pointer; }
 .menu-toggle { justify-self: end; background: none; border: 0; padding: 10px; }
 .menu-toggle span { display: block; width: 24px; height: 2px; background: var(--ink); margin: 5px 0; }
 
-.nav { display: none; border-top: 1px solid var(--line); background: var(--paper); }
-.nav.is-open { display: block; }
-.nav-inner { display: grid; grid-template-columns: 1fr auto; gap: 32px; padding: 24px 0 28px; }
-.toc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 24px; counter-reset: toc; }
+/* 목차: 오른쪽에서 밀려 나오는 패널 */
+.nav {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 120;
+  width: min(380px, 88vw); background: var(--paper); box-shadow: -12px 0 32px rgba(22, 36, 58, .16);
+  overflow-y: auto; overscroll-behavior: contain;
+  transform: translateX(100%); visibility: hidden;
+  transition: transform .3s ease, visibility 0s linear .3s;
+}
+.nav.is-open { transform: none; visibility: visible; transition: transform .3s ease; }
+.nav-backdrop { position: fixed; inset: 0; z-index: 110; background: rgba(22, 36, 58, .35); }
+.nav-locked, .nav-locked body { overflow: hidden; }
+.nav-inner { display: flex; flex-direction: column; gap: 24px; padding: 20px 24px 32px; }
+.nav-head { display: flex; justify-content: space-between; align-items: center; }
+.nav-head strong { font-size: 1.1rem; }
+.nav-close { background: none; border: 0; font-size: 1.8rem; line-height: 1; padding: 4px 8px; color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .nav, .nav.is-open { transition: none; } }
+.toc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 0; counter-reset: toc; }
 .toc li { counter-increment: toc; }
 .toc a { display: block; padding: 8px 0; text-decoration: none; border-bottom: 1px solid var(--line); }
 .toc a::before { content: counter(toc, decimal-leading-zero) "  "; color: var(--issue); font-weight: 700; font-size: .85rem; }
 .toc a[aria-current] { font-weight: 700; }
-.nav-actions { display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
+.nav-actions { display: flex; flex-direction: column; gap: 8px; }
 .nav-actions a, .nav-actions button { display: block; text-align: center; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); text-decoration: none; color: var(--ink); }
 .nav-actions .primary { background: var(--issue); border-color: var(--issue); color: #fff; }
 
 /* Buttons */
-.btn { display: inline-block; border: 0; border-radius: 999px; padding: 13px 26px; font-weight: 600; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+.btn { display: inline-block; white-space: nowrap; border: 0; border-radius: 999px; padding: 13px 26px; font-weight: 600; text-decoration: none; transition: transform .15s, box-shadow .15s; }
 .btn-primary { background: var(--issue); color: #fff; }
 .btn-light { background: #fff; color: var(--ink); }
 .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
@@ -90,6 +107,9 @@ button { font: inherit; cursor: pointer; }
 }
 .cover-label { font-size: 1rem; letter-spacing: .12em; color: var(--issue); font-weight: 600; }
 .cover h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 800; margin: .1em 0 .2em; color: #183a5a; }
+/* 표지 제목: SVG 로고 (흰 테두리 빛으로 눈송이 위에서도 읽히게) */
+.cover-title { margin: .2em 0 .5em; line-height: 0; }
+.cover-title img { display: block; width: clamp(240px, 30vw, 400px); height: auto; filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px rgba(255, 255, 255, .8)); }
 .cover-issue { font-weight: 600; color: var(--ink-soft); margin-bottom: 32px; }
 .cover h1, .cover-label, .cover-issue { text-shadow: 0 0 10px #fff, 0 0 18px rgba(255, 255, 255, .9); }
 
@@ -263,7 +283,6 @@ th { background: #f3eee5; font-weight: 600; }
   .issue-mark { display: none; }
   .brand { text-align: left; }
   .brand strong { font-size: 1.15rem; }
-  .nav-inner { grid-template-columns: 1fr; gap: 20px; }
   /* 모바일: 이미지 전체(가로 100%)가 보이도록 표지 비율을 이미지와 같게 → 아래가 잘리지 않음 */
   .cover {
     aspect-ratio: 1481 / 2000; min-height: 0;
@@ -272,6 +291,7 @@ th { background: #f3eee5; font-weight: 600; }
   .cover::before { inset: 0; aspect-ratio: auto; -webkit-mask-image: none; mask-image: none; }
   .cover-inner { max-width: 62%; margin-left: 16px; }
   .cover h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
+  .cover-title img { width: min(100%, 220px); }
   .cover-issue { margin-bottom: 20px; }
   .section { padding: 48px 0; }
   .grid { gap: 14px; }
