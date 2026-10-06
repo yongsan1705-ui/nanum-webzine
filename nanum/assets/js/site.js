@@ -4,7 +4,8 @@
 // ─────────────────────────────────────────────
 (function () {
   const CFG = window.NANUM_CONFIG || { mode: "demo", api: "api/submit.php" };
-  const isDemo = CFG.mode !== "server";
+  const isSupabase = CFG.mode === "supabase" && CFG.supabaseUrl && CFG.supabaseKey;
+  const isDemo = !isSupabase && CFG.mode !== "server";
   const article = document.body.dataset.article || null;
 
   // ── 시연 모드 저장소 (서버 없이 확인할 때만 사용) ──
@@ -14,9 +15,22 @@
     save(d) { try { localStorage.setItem(this.key, JSON.stringify(d)); } catch {} }
   };
 
-  if (isDemo) {
-    document.getElementById("demo-bar")?.removeAttribute("hidden");
+  if (isDemo || isSupabase) {
+    const bar = document.getElementById("demo-bar");
+    if (bar && isSupabase) bar.textContent = "연습 모드 · 입력한 내용은 연습용 DB에 저장됩니다. 실제 이름·연락처를 입력하지 마세요";
+    bar?.removeAttribute("hidden");
     document.querySelectorAll(".demo-only").forEach(el => el.removeAttribute("hidden"));
+  }
+
+  // ── Supabase 저장 (INSERT만 가능한 공개 키 사용) ──
+  // 409(같은 이메일 재신청)는 성공으로 처리: 이미 신청된 이메일인지 바깥에 알리지 않음
+  function sbInsert(table, row, keepalive = false) {
+    return fetch(`${CFG.supabaseUrl}/rest/v1/${table}`, {
+      method: "POST",
+      headers: { apikey: CFG.supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
+      body: JSON.stringify(row),
+      keepalive
+    }).then(res => res.ok || res.status === 409);
   }
 
   // ── 유입 경로: 첫 방문 페이지 기준으로 세션 동안 유지 ──
@@ -43,6 +57,10 @@
   function sendEvent(type, value, art = article) {
     const ev = { kind: "event", type, article: art, value: value ?? null, source, view_id: viewId, ts: Date.now() };
     if (isDemo) { const d = Demo.load(); d.events.push(ev); Demo.save(d); return; }
+    if (isSupabase) {
+      sbInsert("events", { type, article: art, value: value == null ? null : String(value), source, view_id: viewId }, true).catch(() => {});
+      return;
+    }
     const body = JSON.stringify(ev);
     try {
       if (navigator.sendBeacon && navigator.sendBeacon(CFG.api, new Blob([body], { type: "application/json" }))) return;
@@ -58,6 +76,18 @@
       (kind === "consult" ? d.consults : d.subscribers).push(row);
       Demo.save(d);
       return { ok: true };
+    }
+    if (isSupabase) {
+      const row = kind === "consult"
+        ? { name: data.name, phone: data.phone, field: data.field, contact_time: data.time, article: data.article, source: data.source, agree_privacy: true }
+        : { email: data.email, name: data.name || null, article: data.article, source: data.source, agree_privacy: true, agree_marketing: true };
+      try {
+        return (await sbInsert(kind === "consult" ? "consults" : "subscribers", row))
+          ? { ok: true }
+          : { ok: false, error: "접수 중 문제가 생겼습니다. 입력 내용을 확인한 뒤 다시 시도해 주세요." };
+      } catch {
+        return { ok: false, error: "네트워크 연결을 확인한 뒤 다시 시도해 주세요." };
+      }
     }
     try {
       const res = await fetch(CFG.api, {

@@ -398,7 +398,7 @@ ARTICLES.forEach((a, i) => { files[page(a.id)] = buildArticle(a, i); });
 
 // 시연 모드에서만: 이 브라우저에 쌓인 신청·통계를 보는 화면(demo-db.html)을 웹진과 같은 주소에 만듦.
 // (브라우저 저장 데이터는 사이트 주소별로 따로 보관되므로 웹진 안에 있어야 보임) 서버 모드로 바꾸면 자동으로 지움.
-const isDemoMode = /mode:\s*"demo"/.test(fs.readFileSync(path.join(OUT, "assets/js/config.js"), "utf8"));
+const isDemoMode = /^\s*mode:\s*"demo"/m.test(fs.readFileSync(path.join(OUT, "assets/js/config.js"), "utf8"));
 const demoDbPath = path.join(OUT, "demo-db.html");
 if (isDemoMode) {
   const list = JSON.stringify(ARTICLES.map(a => ({ id: a.id, kicker: a.kicker }))).replace(/</g, "\\u003c");
