@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>DB | 웹진 관리자</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=7e6d40e3">
+</head>
+<body class="admin">
+  <!--
+    build/build.js가 db-template.html로 만드는 파일입니다. 직접 고치지 마세요.
+    Supabase 관리자 로그인 → 접수·통계 조회. 데이터 보호는 DB 보안 규칙(RLS)이 담당합니다:
+    로그인했더라도 admins 명단에 없는 계정은 아무것도 읽을 수 없습니다.
+  -->
+  <div class="test-bar">연습용 DB 관리 화면 · 실제 환자 정보를 입력·보관하지 마세요</div>
+  <header class="site-header"><div class="wrap admin-header"><a class="brand" href="index.html"><small>센트럴서울안과 소식지</small><strong>웹진 관리자</strong></a><span id="who"></span></div></header>
+  <main id="main"><section class="section dash"><div class="wrap" id="root"></div></section></main>
+  <script src="assets/js/config.js?v=a4871dcb"></script>
+  <script>const ARTICLES = [{"id":"greeting","kicker":"인사말"},{"id":"issue","kicker":"이슈 칼럼"},{"id":"interview-hwang","kicker":"만나, 보다_의료진 · 녹내장 클리닉 황영훈 원장"},{"id":"club","kicker":"만나, 보다_구성원"},{"id":"doctors-leisure","kicker":"함께하는 센트럴서울안과 2"},{"id":"eye-counsel","kicker":"눈쪽상담소"},{"id":"glaucoma-exercise","kicker":"건강+1"},{"id":"seasonal-routine","kicker":"건강+2"},{"id":"retina-column","kicker":"칼럼 1 · 망막 클리닉 송민혜 원장"},{"id":"glaucoma-column","kicker":"칼럼 2 · 녹내장 클리닉 김미진 원장"},{"id":"sharing","kicker":"함께하는 센트럴서울안과 1"},{"id":"vision-camp","kicker":"특별기고"},{"id":"concert","kicker":"함께하는 센트럴서울안과 3"},{"id":"ichon-food","kicker":"특집기획 · 센트럴서울안과 동네 한 바퀴"},{"id":"golf","kicker":"골프칼럼"},{"id":"news","kicker":"NEWS"}];</script>
+  <script>
+  (function () {
+    const CFG = window.NANUM_CONFIG || {};
+    const root = document.getElementById("root"), who = document.getElementById("who");
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const label = id => (ARTICLES.find(a => a.id === id) || {}).kicker || "메인·직접 접속";
+    const time = ts => new Date(ts).toLocaleString("ko-KR");
+    const fmt = s => s >= 60 ? `${Math.floor(s / 60)}분 ${s % 60}초` : `${s || 0}초`;
+
+    if (!CFG.supabaseUrl || !CFG.supabaseKey) {
+      root.innerHTML = `<p class="muted">Supabase 설정이 없습니다. assets/js/config.js를 확인해 주세요.</p>`;
+      return;
+    }
+
+    // ── 로그인 세션 (탭을 닫으면 사라지는 sessionStorage에만 보관) ──
+    const KEY = "nanum-admin-session";
+    const getSession = () => { try { return JSON.parse(sessionStorage.getItem(KEY)); } catch { return null; } };
+    const setSession = s => { try { s ? sessionStorage.setItem(KEY, JSON.stringify(s)) : sessionStorage.removeItem(KEY); } catch {} };
+
+    async function auth(grant, body) {
+      const res = await fetch(`${CFG.supabaseUrl}/auth/v1/token?grant_type=${grant}`, {
+        method: "POST", headers: { apikey: CFG.supabaseKey, "Content-Type": "application/json" }, body: JSON.stringify(body)
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(j.error_description || j.msg || "로그인에 실패했습니다.");
+      return { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: Date.now() + (j.expires_in - 60) * 1000, email: j.user?.email };
+    }
+    async function token() {
+      let s = getSession();
+      if (!s) return null;
+      if (Date.now() > s.expires_at) {
+        try { s = await auth("refresh_token", { refresh_token: s.refresh_token }); setSession(s); }
+        catch { setSession(null); return null; }
+      }
+      return s.access_token;
+    }
+    async function api(path, opts = {}) {
+      const t = await token();
+      if (!t) throw new Error("로그인이 필요합니다.");
+      const res = await fetch(`${CFG.supabaseUrl}/rest/v1/${path}`, {
+        ...opts, headers: { apikey: CFG.supabaseKey, Authorization: `Bearer ${t}`, "Content-Type": "application/json", ...(opts.headers || {}) }
+      });
+      if (!res.ok) throw new Error(`데이터를 불러오지 못했습니다. (${res.status})`);
+      return res.json();
+    }
+
+    function loginView(msg = "") {
+      who.textContent = "";
+      root.innerHTML = `
+        <h1 class="page-title">관리자 로그인</h1>
+        <form class="form panel" id="login" style="max-width:420px">
+          <label>이메일 <input name="email" type="email" required autocomplete="username"></label>
+          <label>비밀번호 <input name="password" type="password" required autocomplete="current-password"></label>
+          <p class="form-error" role="alert">${esc(msg)}</p>
+          <button class="btn btn-primary" type="submit">로그인</button>
+        </form>
+        <p class="muted">관리자 계정은 Supabase 관리 화면에서 만들고, 관리자 명단(admins)에 등록된 계정만 데이터를 볼 수 있습니다.</p>`;
+      const f = document.getElementById("login");
+      f.addEventListener("submit", async e => {
+        e.preventDefault();
+        const btn = f.querySelector("button"); btn.disabled = true;
+        try { setSession(await auth("password", { email: f.email.value.trim(), password: f.password.value })); await dashboard(); }
+        catch (err) { f.password.value = ""; f.querySelector(".form-error").textContent = err.message; btn.disabled = false; }
+      });
+    }
+
+    async function logout() {
+      const t = getSession()?.access_token;
+      setSession(null);
+      if (t) fetch(`${CFG.supabaseUrl}/auth/v1/logout`, { method: "POST", headers: { apikey: CFG.supabaseKey, Authorization: `Bearer ${t}` } }).catch(() => {});
+      loginView("로그아웃했습니다.");
+    }
+
+    async function dashboard() {
+      root.innerHTML = `<p class="muted">불러오는 중…</p>`;
+      try {
+        if (!(await api("rpc/is_admin", { method: "POST", body: "{}" }))) {
+          setSession(null);
+          return loginView("이 계정은 관리자 명단에 없습니다. 기획실에 등록을 요청해 주세요.");
+        }
+        const [[t], stats, sources, consults, subs] = await Promise.all([
+          api("totals?select=*"),
+          api("article_stats?select=*"),
+          api("source_stats?select=*&order=views.desc"),
+          api("consults?select=created_at,name,phone,field,contact_time,article,source,status&order=created_at.desc&limit=500"),
+          api("subscribers?select=created_at,email,name,article,unsubscribed_at&order=created_at.desc&limit=500")
+        ]);
+        who.innerHTML = `${esc(getSession()?.email)} <button class="tool" id="logout" type="button">로그아웃</button>`;
+        document.getElementById("logout").onclick = logout;
+
+        const byId = Object.fromEntries(stats.map(s => [s.article, s]));
+        const rows = ARTICLES.map(a => ({ a, s: byId[a.id] || {} })).sort((x, y) => (y.s.views || 0) - (x.s.views || 0));
+        const max = Math.max(t.views, 1);
+        root.innerHTML = `
+          <div class="dash-head"><h1 class="page-title">통계</h1><div class="dash-actions"><button class="tool" id="refresh" type="button">새로고침</button></div></div>
+          <div class="kpis">
+            <div><span>기사 조회</span><strong>${t.views}</strong></div><div><span>상담 클릭</span><strong>${t.consult_clicks}</strong></div>
+            <div><span>상담 신청</span><strong>${t.consults}</strong></div><div><span>웹진 신청</span><strong>${t.subscribers}</strong></div>
+            <div><span>공유</span><strong>${t.shares}</strong></div>
+          </div>
+          <h2>상담 전환 경로</h2><div class="funnel">${[["기사 조회", t.views], ["상담받기 클릭", t.consult_clicks], ["상담 신청 제출", t.consult_submits]].map(([l, n]) => `<div class="f-row"><span>${l}</span><div class="f-bar"><i style="width:${n / max * 100}%"></i></div><b>${n}</b></div>`).join("")}</div>
+          <h2>기사별 성과</h2><div class="table-wrap"><table><thead><tr><th>기사</th><th>조회</th><th>평균 체류</th><th>끝까지 읽음</th><th>상담 클릭</th><th>상담 신청</th><th>웹진 신청</th><th>공유</th></tr></thead><tbody>
+            ${rows.map(({ a, s }) => `<tr><td><a href="${esc(a.id)}.html">${esc(a.kicker)}</a></td><td>${s.views || 0}</td><td>${fmt(s.avg_dwell)}</td><td>${s.views ? Math.round(s.reached / s.views * 100) : 0}%</td><td>${s.consult_clicks || 0}</td><td>${s.consult_submits || 0}</td><td>${s.subscribes || 0}</td><td>${s.shares || 0}</td></tr>`).join("")}
+          </tbody></table></div>
+          <h2>유입 경로</h2>${sources.length ? `<ul class="sources">${sources.map(s => `<li><span>${esc(s.source)}</span><b>${s.views}</b></li>`).join("")}</ul>` : `<p class="muted">아직 데이터가 없습니다.</p>`}
+          <h2>상담 신청 (${t.consults}건${t.consults > 500 ? ", 최근 500건 표시" : ""})</h2>${consults.length ? `<div class="table-wrap"><table><thead><tr><th>접수 시각</th><th>이름</th><th>연락처</th><th>관심 분야</th><th>희망 시간</th><th>신청 기사</th><th>유입</th><th>상태</th></tr></thead><tbody>
+            ${consults.map(c => `<tr><td>${time(c.created_at)}</td><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.field)}</td><td>${esc(c.contact_time)}</td><td>${esc(label(c.article))}</td><td>${esc(c.source)}</td><td>${esc(c.status)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">접수 내역이 없습니다.</p>`}
+          <h2>웹진 신청 (${t.subscribers}명${subs.length >= 500 ? ", 최근 500건 표시" : ""})</h2>${subs.length ? `<div class="table-wrap"><table><thead><tr><th>신청 시각</th><th>이메일</th><th>이름</th><th>신청 기사</th><th>상태</th></tr></thead><tbody>
+            ${subs.map(s => `<tr><td>${time(s.created_at)}</td><td>${esc(s.email)}</td><td>${esc(s.name || "-")}</td><td>${esc(label(s.article))}</td><td>${s.unsubscribed_at ? "해지" : "구독 중"}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">신청 내역이 없습니다.</p>`}
+          <p class="muted">상담 처리 상태·메모 수정, 삭제는 Supabase 관리 화면 > Table Editor에서 할 수 있습니다.</p>`;
+        document.getElementById("refresh").onclick = dashboard;
+      } catch (err) {
+        if (!getSession()) return loginView("다시 로그인해 주세요.");
+        root.innerHTML = `<p class="form-error" role="alert">${esc(err.message)}</p><button class="tool" id="retry" type="button">다시 시도</button>`;
+        document.getElementById("retry").onclick = dashboard;
+      }
+    }
+
+    getSession() ? dashboard() : loginView();
+  })();
+  </script>
+</body>
+</html>
