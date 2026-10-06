@@ -134,6 +134,9 @@ button { font: inherit; cursor: pointer; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 0 8px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
 .article-body { font-size: 1.08rem; }
 .article-body h3 { font-size: 1.3rem; margin-top: 1.8em; }
+.article-body h3.has-flag { display: flex; align-items: center; gap: .5em; }
+.flag { width: 1.6em; height: 1.6em; flex: none; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
+.flag-us { object-position: left center; }
 .article-body ul { padding-left: 1.2em; }
 .article-body li { margin-bottom: .4em; }
 .article-body blockquote { margin: 2em 0; padding: 4px 0 4px 24px; border-left: 4px solid var(--issue); font-size: 1.25rem; font-weight: 600; }

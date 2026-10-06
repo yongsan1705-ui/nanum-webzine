@@ -97,7 +97,9 @@ ${main}
 function renderBlock(b, a) {
   switch (b.type) {
     case "p": return `<p>${esc(b.text)}</p>`;
-    case "h": return `<h3>${esc(b.text)}</h3>`;
+    case "h": return b.flag
+      ? `<h3 class="has-flag"><img class="flag flag-${esc(b.flag)}" src="assets/img/flags/${esc(b.flag)}.svg" alt="" width="40" height="40">${esc(b.text)}</h3>`
+      : `<h3>${esc(b.text)}</h3>`;
     case "quote": return `<blockquote><p>${esc(b.text)}</p>${b.by ? `<cite>${esc(b.by)}</cite>` : ""}</blockquote>`;
     case "img": {
       const media = b.src
