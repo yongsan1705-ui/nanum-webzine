@@ -109,7 +109,13 @@ button { font: inherit; cursor: pointer; }
 .cover h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 800; margin: .1em 0 .2em; color: #183a5a; }
 /* 표지 제목: SVG 로고 (흰 테두리 빛으로 눈송이 위에서도 읽히게) */
 .cover-title { margin: .2em 0 .5em; line-height: 0; }
-.cover-title img { display: block; width: clamp(240px, 30vw, 400px); height: auto; filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px rgba(255, 255, 255, .8)); }
+.cover-title img { display: block; width: clamp(240px, 30vw, 400px); height: auto; filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px rgba(255, 255, 255, .8)); animation: logo-in 1.8s ease-out .2s both; }
+/* 표지 로고가 흐릿하게 아래에서 서서히 떠오름 */
+@keyframes logo-in {
+  from { opacity: 0; transform: translateY(12px); filter: blur(6px) drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px rgba(255, 255, 255, .8)); }
+  to   { opacity: 1; transform: none; filter: blur(0) drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px rgba(255, 255, 255, .8)); }
+}
+@media (prefers-reduced-motion: reduce) { .cover-title img { animation: none; } }
 .cover-issue { font-weight: 600; color: var(--ink-soft); margin-bottom: 32px; }
 .cover h1, .cover-label, .cover-issue { text-shadow: 0 0 10px #fff, 0 0 18px rgba(255, 255, 255, .9); }
 
