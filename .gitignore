@@ -2,6 +2,7 @@
 *.local.txt
 *credentials*
 .env*
+!.env.example
 
 # 서버 DB 파일 (접수 데이터)
 nanum/data/*.sqlite*
