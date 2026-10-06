@@ -1,0 +1,9 @@
+# Vercel(정적 호스팅)에서는 PHP가 실행되지 않으므로 서버용 파일은 올리지 않음.
+# 웹진은 시연 모드(assets/js/config.js mode: "demo")로 동작합니다.
+admin/
+api/
+config/
+lib/
+sql/
+data/
+.htaccess
