@@ -174,6 +174,12 @@ button { font: inherit; cursor: pointer; }
 .article-head h1 { font-size: clamp(1.8rem, 4.4vw, 2.8rem); font-weight: 800; }
 .article-byline { color: var(--ink-soft); font-size: .92rem; margin: 0; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 0 8px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+/* 기사 아래 홈 버튼: 누르면 웹진 첫 화면으로 */
+.home-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 36px 0 8px; }
+/* 색: 표지 수채화의 연한 하늘색 바탕 + 진한 파랑 아이콘 (흰 아이콘은 대비가 낮아 잘 안 보임) */
+.home-btn { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #b0d6e8; color: var(--issue); box-shadow: 0 6px 16px rgba(47, 111, 147, .2); transition: transform .2s, box-shadow .2s, background .2s; }
+.home-btn:hover { transform: translateY(-3px); background: #9ccbe2; box-shadow: 0 10px 22px rgba(47, 111, 147, .28); }
+.home-label { font-size: .8rem; color: var(--ink-soft); }
 .article-body { font-size: 1.08rem; }
 .article-body h3 { font-size: 1.3rem; margin-top: 1.8em; }
 .article-body h3.has-flag { display: flex; align-items: center; gap: .5em; }
@@ -261,6 +267,13 @@ th { background: #f3eee5; font-weight: 600; }
 /* Footer */
 .site-footer { background: #0f1c2b; color: #b6c2d1; padding: 40px 0 96px; font-size: .88rem; font-family: var(--font-title); font-weight: 300; line-height: 1.8; }
 .site-footer a { color: #e3e9f0; }
+/* 푸터: 왼쪽 글, 오른쪽 바로가기 아이콘 (홈·페이스북·인스타그램·유튜브) */
+.footer-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.social { list-style: none; margin: 0; padding: 0; display: flex; gap: 10px; flex: none; }
+.social a { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #7d8189; color: #fff; transition: background .2s, transform .2s; }
+.social a:hover { background: #9aa0aa; transform: translateY(-2px); }
+.social svg { width: 22px; height: 22px; }
+@media (max-width: 640px) { .footer-inner { flex-direction: column; } }
 .disclaimer { color: #e3e9f0; }
 
 /* FAB */
