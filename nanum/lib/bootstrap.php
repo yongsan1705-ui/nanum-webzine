@@ -45,7 +45,52 @@ function db(): PDO
         $pdo->exec('PRAGMA busy_timeout = 3000');
         create_schema_sqlite($pdo);
     }
+    migrate_consults($pdo);
     return $pdo;
+}
+
+// 예전 구조(희망 연락 시간 contact_time 있음, 문의 내용 message 없음)로 만들어진 DB를 새 구조로 바꿉니다.
+// 기존 상담 기록은 그대로 옮기고, 희망 연락 시간 값은 더 이상 쓰지 않습니다.
+function migrate_consults(PDO $pdo): void
+{
+    if (is_sqlite()) {
+        $cols = array_column($pdo->query('PRAGMA table_info(consults)')->fetchAll(), 'name');
+        if (!in_array('contact_time', $cols, true)) return;
+        $msg = in_array('message', $cols, true) ? 'message' : 'NULL';
+        // SQLite는 NOT NULL 칸을 바로 지울 수 없어 새 표로 옮겨 담습니다 (한 번에 처리되거나, 실패하면 원래대로)
+        $pdo->beginTransaction();
+        try {
+            $pdo->exec('CREATE TABLE consults_new (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                name          TEXT    NOT NULL,
+                phone         TEXT    NOT NULL,
+                field         TEXT    NOT NULL,
+                message       TEXT,
+                article       TEXT,
+                source        TEXT,
+                agree_privacy INTEGER NOT NULL DEFAULT 0,
+                agreed_at     TEXT    NOT NULL,
+                status        TEXT    NOT NULL DEFAULT \'접수\',
+                memo          TEXT,
+                created_at    TEXT    NOT NULL,
+                updated_at    TEXT
+            )');
+            $pdo->exec("INSERT INTO consults_new (id, name, phone, field, message, article, source, agree_privacy, agreed_at, status, memo, created_at, updated_at)
+                        SELECT id, name, phone, field, $msg, article, source, agree_privacy, agreed_at, status, memo, created_at, updated_at FROM consults");
+            $pdo->exec('DROP TABLE consults');
+            $pdo->exec('ALTER TABLE consults_new RENAME TO consults');
+            $pdo->exec('CREATE INDEX IF NOT EXISTS idx_consults_created ON consults (created_at)');
+            $pdo->commit();
+        } catch (Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+        return;
+    }
+    // MySQL / MariaDB
+    $cols = array_column($pdo->query('SHOW COLUMNS FROM consults')->fetchAll(), 'Field');
+    if (!in_array('message', $cols, true)) $pdo->exec('ALTER TABLE consults ADD COLUMN message VARCHAR(500) NULL AFTER field');
+    if (in_array('contact_time', $cols, true)) $pdo->exec('ALTER TABLE consults MODIFY contact_time VARCHAR(20) NULL');
 }
 
 // SQLite: 테이블이 없으면 만듭니다. (MySQL은 sql/schema-mysql.sql 사용)

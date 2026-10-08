@@ -22,15 +22,14 @@
     document.querySelectorAll(".demo-only").forEach(el => el.removeAttribute("hidden"));
   }
 
-  // ── Supabase 저장 (INSERT만 가능한 공개 키 사용) ──
-  // 409(같은 이메일 재신청)는 성공으로 처리: 이미 신청된 이메일인지 바깥에 알리지 않음
+  // ── Supabase 저장 (INSERT만 가능한 공개 키 사용) ── 응답 상태 코드를 돌려줌
   function sbInsert(table, row, keepalive = false) {
     return fetch(`${CFG.supabaseUrl}/rest/v1/${table}`, {
       method: "POST",
       headers: { apikey: CFG.supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
       body: JSON.stringify(row),
       keepalive
-    }).then(res => res.ok || res.status === 409);
+    }).then(res => res.status);
   }
 
   // ── 유입 경로: 첫 방문 페이지 기준으로 세션 동안 유지 ──
@@ -82,9 +81,11 @@
         ? { name: data.name, phone: data.phone, field: data.field, message: data.message || null, article: data.article, source: data.source, agree_privacy: true }
         : { email: data.email, name: data.name || null, article: data.article, source: data.source, agree_privacy: true, agree_marketing: true };
       try {
-        return (await sbInsert(kind === "consult" ? "consults" : "subscribers", row))
-          ? { ok: true }
-          : { ok: false, error: "접수 중 문제가 생겼습니다. 입력 내용을 확인한 뒤 다시 시도해 주세요." };
+        const status = await sbInsert(kind === "consult" ? "consults" : "subscribers", row);
+        if (status >= 200 && status < 300) return { ok: true };
+        // 409 = 이미 신청한 이메일. 화면에는 완료로 보여 신청 여부를 바깥에 알리지 않고, 통계에는 세지 않음
+        if (status === 409 && kind === "subscribe") return { ok: true, duplicate: true };
+        return { ok: false, error: "접수 중 문제가 생겼습니다. 입력 내용을 확인한 뒤 다시 시도해 주세요." };
       } catch {
         return { ok: false, error: "네트워크 연결을 확인한 뒤 다시 시도해 주세요." };
       }
@@ -226,7 +227,7 @@
       const res = await sendForm(kind, { ...collect[kind](form), article: fromParam, source });
       btn.disabled = false;
       if (!res.ok) { err.textContent = res.error; return; }
-      sendEvent(kind === "consult" ? "consult_submit" : "subscribe", null, fromParam);
+      if (!res.duplicate) sendEvent(kind === "consult" ? "consult_submit" : "subscribe", null, fromParam);
       form.hidden = true;
       const done = form.parentElement.querySelector(".done");
       done.hidden = false;
