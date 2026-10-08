@@ -111,7 +111,7 @@ button { font: inherit; cursor: pointer; }
   content: ""; position: absolute; z-index: -1;
   top: 0; bottom: 0; right: max(0px, calc((100% - 1240px) / 2));
   aspect-ratio: 1481 / 2000;
-  background: url("../img/cover.jpg") center / cover no-repeat;
+  background: url("../img/cover.webp") center / cover no-repeat;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
 }
@@ -249,14 +249,14 @@ body[data-article="club"] .article-body h3 { font-family: var(--font-title); fon
   min-height: 105cqw;
   padding: 10cqw 7.5cqw 26cqw;
   background:
-    url("../img/letter-top.jpg") center top / 100% auto no-repeat,
-    url("../img/letter-mid.jpg") 0 69.12cqw / 100% auto repeat-y,
+    url("../img/letter-top.webp") center top / 100% auto no-repeat,
+    url("../img/letter-mid.webp") 0 69.12cqw / 100% auto repeat-y,
     #f3efe6;
 }
 /* 아래 조각: 윗부분을 흐리게 겹쳐 가운데 무늬와의 이음새를 감춤 */
 .letter::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 35.44cqw;
-  background: url("../img/letter-bottom.jpg") center bottom / 100% auto no-repeat;
+  background: url("../img/letter-bottom.webp") center bottom / 100% auto no-repeat;
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 22%);
           mask-image: linear-gradient(180deg, transparent 0, #000 22%);
   pointer-events: none;
