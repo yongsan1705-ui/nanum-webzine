@@ -200,6 +200,17 @@ button { font: inherit; cursor: pointer; }
 .flag-us { object-position: left center; }
 /* 기사 도입 문단을 G마켓 산스 Medium으로 */
 .article-body p.intro-title-font { font-family: var(--font-title); font-weight: 500; }
+/* 본문 사진 왼쪽 + 글 오른쪽 (좁은 화면에서는 사진 위·글 아래) */
+.media-row { display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: start; margin: 1.2em 0 2em; }
+.article-body .media-row figure { margin: 0; }
+.media-text > p:first-child { margin-top: 0; }
+.media-text > p:last-child { margin-bottom: 0; }
+.media-text > p { text-align: justify; }
+@media (max-width: 640px) {
+  .media-row { grid-template-columns: 1fr; gap: 20px; }
+  .article-body .media-row figure { max-width: 200px; margin-inline: auto; }
+  .media-text > p { word-break: normal; line-break: strict; }
+}
 /* 소제목 옆 원장 얼굴 사진 */
 .avatar { width: 2.4em; height: 2.4em; flex: none; border-radius: 50%; object-fit: cover; object-position: center top; background: #fff; box-shadow: 0 0 0 1px var(--line); }
 .article-body ul { padding-left: 1.2em; }
