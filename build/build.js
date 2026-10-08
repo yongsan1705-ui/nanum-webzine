@@ -136,6 +136,11 @@ function renderBlock(b, a) {
     case "timeline": return `<ol class="timeline">${b.items.map(i => `<li><time>${esc(i.date)}</time><p>${esc(i.text)}</p></li>`).join("")}</ol>`;
     case "tag": return `<div class="tag-card"><span class="tag">${esc(b.tag)}</span><strong>${esc(b.title)}</strong><p>${esc(b.text)}</p></div>`;
     case "note": return `<p class="note">${esc(b.text)}</p>`;
+    case "place": return `<ul class="place-info">
+            <li><span class="pi-label">주소</span>${esc(b.address)}</li>
+            <li><span class="pi-label">전화</span><a href="tel:${esc(b.phone.replace(/[^0-9]/g, ""))}">${esc(b.phone)}</a></li>
+            ${b.link ? `<li><a class="pi-link" href="${esc(b.link)}" target="_blank" rel="noopener noreferrer">예약 및 배달 안내<span class="sr-only"> (네이버 지도, 새 창)</span> ↗</a></li>` : ""}
+          </ul>`;
     case "video": return `<figure><div class="ph-video" role="img" aria-label="영상: ${esc(b.title)}"><span>▶</span></div><figcaption>${esc(b.title)}</figcaption></figure>`;
     case "consult": return `<aside class="cta-box"><div><strong>궁금한 점이 있으신가요?</strong><p>관련 진료에 대해 상담을 신청하실 수 있습니다.</p></div><a class="btn btn-primary" href="consult.html?from=${esc(a.id)}" data-track="consult_click">상담받기</a></aside>`;
     case "subscribe": return `<aside class="cta-box alt"><div><strong>다음 호도 받아보세요</strong><p>새 호가 발행되면 이메일로 알려 드립니다.</p></div><a class="btn btn-primary" href="subscribe.html?from=${esc(a.id)}">웹진 신청하기</a></aside>`;
