@@ -216,6 +216,8 @@ button { font: inherit; cursor: pointer; }
 .article-body li { margin-bottom: .4em; }
 .article-body blockquote { margin: 2em 0; padding: 4px 0 4px 24px; border-left: 4px solid var(--issue); font-size: 1.25rem; font-weight: 600; }
 .article-body cite { display: block; font-size: .9rem; font-style: normal; color: var(--ink-soft); font-weight: 400; }
+/* 소제목 옆 원형 아이콘 */
+.h3-icon { width: 2.2em; height: 2.2em; flex: none; }
 /* 인용 왼쪽에 말한 원장 얼굴 */
 .article-body blockquote.has-avatar { display: grid; grid-template-columns: 56px 1fr; column-gap: 18px; align-items: start; }
 .article-body blockquote.has-avatar .avatar { grid-row: 1 / span 2; width: 56px; height: 56px; margin-top: 2px; }
