@@ -210,6 +210,8 @@ button { font: inherit; cursor: pointer; }
 /* 배경을 지운 인물 사진: 원본 크기 이하로, 회색 바탕·둥근 모서리 없이 */
 .article-body figure.cutout { max-width: 220px; margin-inline: auto; }
 .article-body figure.cutout img { background: none; border-radius: 0; }
+/* 동아리 기사 소제목: G마켓 산스 Light */
+body[data-article="club"] .article-body h3 { font-family: var(--font-title); font-weight: 300; }
 /* 동아리 기사: 소제목 아래 사진은 왼쪽, Q&A는 오른쪽 (좁은 화면에서는 사진 위·글 아래) */
 .club-item { display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: start; margin: 1.2em 0 2.8em; }
 .club-item figure.cutout { margin: 0; max-width: none; }
