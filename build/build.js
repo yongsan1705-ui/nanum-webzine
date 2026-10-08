@@ -58,9 +58,8 @@ function layout({ title, description, article = "", main, bodyClass = "" }) {
   <header class="site-header">
     <div class="wrap header-inner">
       <p class="issue-mark">${esc(ISSUE.year)}<span class="bar"></span>VOL.<strong> ${esc(ISSUE.vol)}</strong></p>
-      <a class="brand" href="index.html" aria-label="소식지 홈">
-        <small>${esc(ISSUE.label)}</small>
-        <strong>${esc(ISSUE.title)}</strong>
+      <a class="brand brand-ci" href="index.html" aria-label="소식지 홈">
+        <img src="assets/img/ci-logo.png" alt="센트럴서울안과 · ${esc(ISSUE.title)}" width="708" height="156">
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="메뉴 열기">
         <span></span><span></span><span></span>

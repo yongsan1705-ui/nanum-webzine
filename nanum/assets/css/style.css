@@ -1,5 +1,6 @@
-/* 글꼴: 제목(메인 타이틀)만 G마켓 산스 Bold, 본문·설명·소제목은 Pretendard.
-   G마켓 산스는 제목에만 쓰므로 Bold 한 가지만 불러옴 (불러오기 전에는 Pretendard로 표시) */
+/* 글꼴: 제목(메인 타이틀)은 G마켓 산스 Bold, 표지 소식지 이름은 G마켓 산스 Medium, 본문·설명·소제목은 Pretendard.
+   (불러오기 전에는 Pretendard로 표시) */
+@font-face { font-family: "GmarketSans"; font-weight: 500; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff"); }
 @font-face { font-family: "GmarketSans"; font-weight: 700; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff"); }
 
 /* 호수마다 바꿀 수 있는 색은 --issue 하나뿐입니다. 나머지는 고정. */
@@ -53,6 +54,9 @@ button { font: inherit; cursor: pointer; }
 .brand { text-decoration: none; text-align: center; line-height: 1.2; }
 .brand small { display: block; font-size: .72rem; color: var(--ink-soft); letter-spacing: .04em; }
 .brand strong { font-size: 1.3rem; font-weight: 800; }
+/* 상단 CI 로고 (원본 708×156, 높이 기준으로 줄임) */
+.brand-ci { display: block; line-height: 0; }
+.brand-ci img { display: block; height: 40px; width: auto; }
 .menu-toggle { justify-self: end; background: none; border: 0; padding: 10px; }
 .menu-toggle span { display: block; width: 24px; height: 2px; background: var(--ink); margin: 5px 0; }
 
@@ -110,7 +114,7 @@ button { font: inherit; cursor: pointer; }
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
 }
-.cover-label { font-size: 1rem; letter-spacing: .12em; color: var(--issue); font-weight: 600; }
+.cover-label { font-family: var(--font-title); font-size: 1.35rem; font-weight: 500; letter-spacing: .04em; color: var(--issue); margin-bottom: .6em; }
 .cover h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 800; margin: .1em 0 .2em; color: #183a5a; }
 /* 표지 제목: SVG 로고 (흰 테두리 빛으로 눈송이 위에서도 읽히게) */
 .cover-title { margin: .2em 0 .5em; line-height: 0; }
@@ -123,6 +127,8 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .cover-title img { animation: none; } }
 .cover-issue { font-weight: 600; color: var(--ink-soft); margin-bottom: 32px; }
 .cover h1, .cover-label, .cover-issue { text-shadow: 0 0 10px #fff, 0 0 18px rgba(255, 255, 255, .9); }
+/* 표지 버튼: G마켓 산스 Bold, 크고 꽉 차게 */
+.cover .btn { font-family: var(--font-title); font-weight: 700; font-size: 1.2rem; letter-spacing: -.01em; padding: 18px 40px; box-shadow: 0 8px 20px rgba(47, 111, 147, .28); }
 
 /* Sections */
 .section { padding: 72px 0; }
@@ -296,6 +302,7 @@ td.msg { white-space: pre-wrap; min-width: 180px; max-width: 320px; }
   .issue-mark { display: none; }
   .brand { text-align: left; }
   .brand strong { font-size: 1.15rem; }
+  .brand-ci img { height: 32px; }
   /* 모바일: 이미지 전체(가로 100%)가 보이도록 표지 비율을 이미지와 같게 → 아래가 잘리지 않음 */
   .cover {
     aspect-ratio: 1481 / 2000; min-height: 0;
@@ -306,6 +313,8 @@ td.msg { white-space: pre-wrap; min-width: 180px; max-width: 320px; }
   .cover h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
   .cover-title img { width: min(100%, 220px); }
   .cover-issue { margin-bottom: 20px; }
+  .cover .btn { font-size: 1.02rem; padding: 15px 26px; }
+  .cover-label { font-size: 1.1rem; }
   .section { padding: 48px 0; }
   .grid { gap: 14px; }
   .card-body { padding: 14px 14px 16px; }
