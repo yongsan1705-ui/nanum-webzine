@@ -208,7 +208,13 @@ button { font: inherit; cursor: pointer; }
 .article-body cite { display: block; font-size: .9rem; font-style: normal; color: var(--ink-soft); font-weight: 400; }
 .article-body figure { margin: 2em 0; }
 .ph-img, .ph-video { aspect-ratio: 16 / 9; border-radius: 12px; background: repeating-linear-gradient(45deg, #ece5d9 0 12px, #f4efe6 12px 24px); display: grid; place-items: center; color: var(--ink-soft); font-size: .9rem; }
-.ph-video { background: #1f2a38; color: #fff; font-size: 2rem; }
+/* 유튜브 영상 썸네일: 누르면 유튜브로 이동 */
+.video-link { position: relative; display: block; border-radius: 12px; overflow: hidden; }
+.video-link img { border-radius: 0; transition: transform .3s ease; }
+.video-link:hover img, .video-link:focus-visible img { transform: scale(1.03); }
+.video-link .play { position: absolute; inset: 50% auto auto 50%; width: 68px; height: 48px; margin: -24px 0 0 -34px; border-radius: 14px; background: rgba(0,0,0,.72); transition: background .2s; }
+.video-link .play::after { content: ""; position: absolute; left: 27px; top: 14px; border-style: solid; border-width: 10px 0 10px 17px; border-color: transparent transparent transparent #fff; }
+.video-link:hover .play, .video-link:focus-visible .play { background: #f00; }
 .article-body figure img { display: block; width: 100%; height: auto; border-radius: 12px; background: #e9eef2; }
 .article-body figure.portrait { max-width: 440px; margin-inline: auto; }
 /* 배경을 지운 인물 사진: 원본 크기 이하로, 회색 바탕·둥근 모서리 없이 */
