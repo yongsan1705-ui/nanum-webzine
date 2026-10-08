@@ -210,6 +210,15 @@ button { font: inherit; cursor: pointer; }
 /* 배경을 지운 인물 사진: 원본 크기 이하로, 회색 바탕·둥근 모서리 없이 */
 .article-body figure.cutout { max-width: 220px; margin-inline: auto; }
 .article-body figure.cutout img { background: none; border-radius: 0; }
+/* 동아리 기사: 소제목 아래 사진은 왼쪽, Q&A는 오른쪽 (좁은 화면에서는 사진 위·글 아래) */
+.club-item { display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: start; margin: 1.2em 0 2.8em; }
+.club-item figure.cutout { margin: 0; max-width: none; }
+.club-qa .qa:first-child { margin-top: 0; }
+.club-qa .qa:last-child { margin-bottom: 0; }
+@media (max-width: 640px) {
+  .club-item { grid-template-columns: 1fr; gap: 20px; }
+  .club-item figure.cutout { max-width: 200px; margin-inline: auto; }
+}
 /* 편지지 (인사말): 원본 1143×2000 이미지를 위(0~790)·가운데(790~1595, 무늬 한 주기 단위로 반복)·아래(1595~2000) 세 조각으로 나눠 붙임.
    길이와 상관없이 테두리가 찌그러지지 않음. 1cqw = 원본 11.43px */
 .letter-wrap { container-type: inline-size; margin-bottom: 8px; }
