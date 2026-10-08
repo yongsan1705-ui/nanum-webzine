@@ -1,5 +1,6 @@
 /* 글꼴: 제목(메인 타이틀)은 G마켓 산스 Bold, 표지 소식지 이름은 G마켓 산스 Medium, 본문·설명·소제목은 Pretendard.
    (불러오기 전에는 Pretendard로 표시) */
+@font-face { font-family: "GmarketSans"; font-weight: 300; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff") format("woff"); }
 @font-face { font-family: "GmarketSans"; font-weight: 500; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff"); }
 @font-face { font-family: "GmarketSans"; font-weight: 700; font-display: swap; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff"); }
 
@@ -139,11 +140,15 @@ button { font: inherit; cursor: pointer; }
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
 .card { background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); text-decoration: none; display: flex; flex-direction: column; transition: transform .2s; }
 .card:hover { transform: translateY(-4px); }
-.card-thumb { aspect-ratio: 4 / 3; display: flex; align-items: flex-end; padding: 14px; }
-.card-thumb span { font-size: .75rem; font-weight: 700; background: rgba(255, 255, 255, .8); padding: 3px 10px; border-radius: 999px; }
+.card-thumb { position: relative; overflow: hidden; aspect-ratio: 4 / 3; display: flex; align-items: flex-end; padding: 14px; }
+/* 카드 사진: 마우스를 올리거나 키보드로 초점이 가면 틀 안에서 천천히 확대 */
+.card-img { position: absolute; inset: 0; transition: transform .7s cubic-bezier(.2, .6, .2, 1); }
+.card:hover .card-img, .card:focus-visible .card-img { transform: scale(1.07); }
+@media (prefers-reduced-motion: reduce) { .card-img { transition: none; } .card:hover .card-img, .card:focus-visible .card-img { transform: none; } }
+.card-thumb span { position: relative; font-size: .75rem; font-weight: 700; background: rgba(255, 255, 255, .8); padding: 3px 10px; border-radius: 999px; }
 .card-body { padding: 20px 22px 24px; display: flex; flex-direction: column; flex: 1; }
 .card-kicker { font-size: .82rem; font-weight: 700; color: var(--issue); margin-bottom: 6px; }
-.card h3 { font-size: 1.15rem; flex: 1; }
+.card h3 { font-size: 1.32rem; font-weight: 500; line-height: 1.4; flex: 1; }
 .card-summary { font-size: .9rem; color: var(--ink-soft); margin-bottom: 12px; }
 .more { font-size: .85rem; color: var(--ink-soft); }
 .group + .group { margin-top: 56px; }
@@ -230,13 +235,6 @@ figcaption { font-size: .88rem; color: var(--ink-soft); margin-top: 8px; }
 .pager small { display: block; color: var(--ink-soft); font-weight: 400; }
 
 /* Archive */
-.archive { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 24px; }
-.archive li { text-align: center; }
-.arc-cover { aspect-ratio: 3 / 4; border-radius: 10px; background: linear-gradient(160deg, #d9d2c5, #f3eee6); display: grid; place-items: center; font-weight: 800; font-size: 1.3rem; color: var(--ink-soft); margin-bottom: 10px; }
-.archive .is-current .arc-cover { background: linear-gradient(160deg, #1f3d58, var(--issue)); color: #fff; }
-.archive p { margin: 0 0 4px; }
-.archive a { color: var(--issue); font-weight: 600; font-size: .9rem; }
-.archive .muted { font-size: .85rem; }
 
 /* Dashboard */
 .dash h2 { margin-top: 48px; font-size: 1.25rem; }
@@ -261,7 +259,7 @@ th { background: #f3eee5; font-weight: 600; }
 .sources li { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; display: flex; gap: 10px; }
 
 /* Footer */
-.site-footer { background: #0f1c2b; color: #b6c2d1; padding: 40px 0 96px; font-size: .88rem; }
+.site-footer { background: #0f1c2b; color: #b6c2d1; padding: 40px 0 96px; font-size: .88rem; font-family: var(--font-title); font-weight: 300; line-height: 1.8; }
 .site-footer a { color: #e3e9f0; }
 .disclaimer { color: #e3e9f0; }
 
@@ -318,7 +316,7 @@ td.msg { white-space: pre-wrap; min-width: 180px; max-width: 320px; }
   .section { padding: 48px 0; }
   .grid { gap: 14px; }
   .card-body { padding: 14px 14px 16px; }
-  .card h3 { font-size: .98rem; }
+  .card h3 { font-size: 1.08rem; }
   .card-kicker { font-size: .74rem; }
   .features { grid-template-columns: 1fr; }
   .feature { padding: 28px 24px; min-height: 150px; }

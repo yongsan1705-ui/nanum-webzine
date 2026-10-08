@@ -4,7 +4,7 @@
 //   - 원고: build/data.js
 //   - 결과: nanum/ 폴더 (업체에 전달·업로드하는 폴더)
 // 생성되는 파일: index.html, 기사별 HTML, consult.html, subscribe.html,
-//               archive.html, config/articles.php(관리자 화면용 기사 목록)
+//               config/articles.php(관리자 화면용 기사 목록)
 // assets/, api/, admin/, lib/, config/config.php 는 직접 관리하는 파일이라 덮어쓰지 않습니다.
 // ─────────────────────────────────────────────
 
@@ -17,8 +17,8 @@ const OUT = path.join(__dirname, "..", "nanum");
 
 const ctx = {};
 vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(SRC, "utf8") + "\nthis.__d = { ISSUE, GROUPS, ARTICLES, ARCHIVE, CONSULT_FIELDS };", ctx);
-const { ISSUE, GROUPS, ARTICLES, ARCHIVE, CONSULT_FIELDS } = ctx.__d;
+vm.runInContext(fs.readFileSync(SRC, "utf8") + "\nthis.__d = { ISSUE, GROUPS, ARTICLES, CONSULT_FIELDS };", ctx);
+const { ISSUE, GROUPS, ARTICLES, CONSULT_FIELDS } = ctx.__d;
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const TEMPLATE_LABEL = { column: "칼럼", interview: "인터뷰", photo: "포토 스토리" };
@@ -77,7 +77,6 @@ function layout({ title, description, article = "", main, bodyClass = "" }) {
 ${ARTICLES.map(a => `          <li><a href="${page(a.id)}"${a.id === article ? ' aria-current="page"' : ""}>${esc(a.kicker)}</a></li>`).join("\n")}
         </ol>
         <div class="nav-actions">
-          <a href="archive.html">지난 호 보기</a>
           <a href="subscribe.html">웹진 신청하기</a>
           <a href="consult.html" class="primary" data-track="consult_click">상담받기</a>
         </div>
@@ -92,7 +91,7 @@ ${main}
     <div class="wrap">
       <p class="disclaimer">본 소식지의 내용은 일반적인 건강 정보로, 개인의 진단이나 치료를 대신하지 않습니다. 증상이 있거나 궁금한 점이 있으면 전문의와 상담하세요.</p>
       <p>발행처 센트럴서울안과 · 서울시 용산구 이촌로 224 한강쇼핑센터 2·3층 · 상담 및 예약 <a href="tel:027922226">02-792-2226</a></p>
-      <p>© ${esc(ISSUE.year)} 센트럴서울안과 · 소식지 ${esc(ISSUE.title)} · <a href="archive.html">지난 호</a></p>
+      <p>© ${esc(ISSUE.year)} 센트럴서울안과 · 소식지 ${esc(ISSUE.title)}</p>
     </div>
   </footer>
 
@@ -157,7 +156,7 @@ function buildLetter(a) {
 function buildIndex() {
   const card = a => `
           <a class="card" href="${page(a.id)}">
-            <div class="card-thumb" style="background:${a.thumb ? `url('${esc(a.thumb)}') ${esc(a.thumbPos || "center")} / cover, ` : ""}${esc(a.color)}"><span>${esc(TEMPLATE_LABEL[a.template])}</span></div>
+            <div class="card-thumb"><i class="card-img" aria-hidden="true" style="background:${a.thumb ? `url('${esc(a.thumb)}') ${esc(a.thumbPos || "center")} / cover, ` : ""}${esc(a.color)}"></i><span>${esc(TEMPLATE_LABEL[a.template])}</span></div>
             <div class="card-body">
               <p class="card-kicker">${esc(a.kicker)}</p>
               <h3>${esc(a.title)}</h3>
@@ -233,25 +232,6 @@ function buildArticle(a, i) {
       </div>
     </article>`;
   return layout({ title: `${a.title} | ${ISSUE.title}`, description: a.summary, article: a.id, main });
-}
-
-// ── 지난 호 ──
-function buildArchive() {
-  const main = `
-    <section class="section">
-      <div class="wrap">
-        <h1 class="page-title">지난 호 보기</h1>
-        <ul class="archive">
-${ARCHIVE.map(v => `          <li class="${v.current ? "is-current" : ""}">
-            <div class="arc-cover"><span>Vol.${esc(v.vol)}</span></div>
-            <p><strong>${esc(v.year)} Vol.${esc(v.vol)}</strong></p>
-            ${v.note ? `<p class="muted">${esc(v.note)}</p>` : ""}
-            ${v.current ? `<a href="index.html">이번 호 보기</a>` : v.pdf ? `<a href="${esc(v.pdf)}" target="_blank" rel="noopener">PDF 보기</a>` : `<span class="muted">PDF 준비 중</span>`}
-          </li>`).join("\n")}
-        </ul>
-      </div>
-    </section>`;
-  return layout({ title: `지난 호 보기 | ${ISSUE.title}`, description: `${SITE} 지난 호 목록`, main });
 }
 
 // ── 상담 신청 페이지 ──
@@ -375,7 +355,6 @@ ARTICLES.forEach(a => {
 fs.mkdirSync(path.join(OUT, "config"), { recursive: true });
 const files = {
   "index.html": buildIndex(),
-  "archive.html": buildArchive(),
   "consult.html": buildConsult(),
   "subscribe.html": buildSubscribe(),
   "config/articles.php": buildArticlesPhp(),
@@ -388,6 +367,9 @@ return [
 `
 };
 ARTICLES.forEach((a, i) => { files[page(a.id)] = buildArticle(a, i); });
+
+// 지난 호 페이지는 쓰지 않음 (이전 빌드에서 만든 파일이 남아 있으면 지움)
+if (fs.existsSync(path.join(OUT, "archive.html"))) fs.unlinkSync(path.join(OUT, "archive.html"));
 
 // 시연 모드에서만: 이 브라우저에 쌓인 신청·통계를 보는 화면(demo-db.html)을 웹진과 같은 주소에 만듦.
 // (브라우저 저장 데이터는 사이트 주소별로 따로 보관되므로 웹진 안에 있어야 보임) 서버 모드로 바꾸면 자동으로 지움.

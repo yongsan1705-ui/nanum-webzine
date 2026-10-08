@@ -497,17 +497,5 @@ const ARTICLES = [
   }
 ];
 
-// 지난 호 목록 (아카이브). pdf에 링크를 넣으면 "PDF 보기"가 켜집니다.
-const ARCHIVE = [
-  { vol: "08", year: "2026", pdf: "" },
-  { vol: "07", year: "2025", pdf: "" },
-  { vol: "06", year: "2024", current: true, note: "웹진 연습본" },
-  { vol: "05", year: "[연도]", pdf: "" },
-  { vol: "04", year: "[연도]", pdf: "" },
-  { vol: "03", year: "[연도]", pdf: "" },
-  { vol: "02", year: "[연도]", pdf: "" },
-  { vol: "01", year: "[연도]", pdf: "" }
-];
-
-// 상담 폼의 관심 분야 (진료 분야 수준으로만 둡니다. 증상 자유 입력란은 두지 않음)
+// 상담 폼의 관심 진료과목 (선택지를 바꾸면 Supabase consults.field 허용 값도 함께 바꿔야 함)
 const CONSULT_FIELDS = ["백내장", "노안", "시력교정", "망막", "녹내장", "건성안", "기타"];
