@@ -188,6 +188,12 @@ button { font: inherit; cursor: pointer; }
 .pi-label { display: inline-block; min-width: 3em; font-weight: 700; color: var(--issue); }
 .pi-link { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--issue); }
 .article-body { font-size: 1.08rem; }
+/* 본문 읽는 글은 양쪽 정렬 (제목·인용구·사진 설명·가게 정보는 제외) */
+.article-body > p, .article-body > ul:not(.place-info) li, .article-body .qa p, .article-body .tag-card p, .article-body .timeline p { text-align: justify; }
+/* 좁은 화면에서는 단어 사이가 크게 벌어지지 않도록 단어 중간 줄바꿈 허용 (신문·잡지 방식) */
+@media (max-width: 640px) {
+  .article-body > p, .article-body > ul:not(.place-info) li, .article-body .qa p, .article-body .tag-card p, .article-body .timeline p { word-break: normal; line-break: strict; }
+}
 .article-body h3 { font-size: 1.3rem; margin-top: 1.8em; }
 .article-body h3.has-flag { display: flex; align-items: center; gap: .5em; }
 .flag { width: 1.6em; height: 1.6em; flex: none; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px var(--line); }
@@ -201,6 +207,9 @@ button { font: inherit; cursor: pointer; }
 .ph-video { background: #1f2a38; color: #fff; font-size: 2rem; }
 .article-body figure img { display: block; width: 100%; height: auto; border-radius: 12px; background: #e9eef2; }
 .article-body figure.portrait { max-width: 440px; margin-inline: auto; }
+/* 배경을 지운 인물 사진: 원본 크기 이하로, 회색 바탕·둥근 모서리 없이 */
+.article-body figure.cutout { max-width: 220px; margin-inline: auto; }
+.article-body figure.cutout img { background: none; border-radius: 0; }
 /* 편지지 (인사말): 원본 1143×2000 이미지를 위(0~790)·가운데(790~1595, 무늬 한 주기 단위로 반복)·아래(1595~2000) 세 조각으로 나눠 붙임.
    길이와 상관없이 테두리가 찌그러지지 않음. 1cqw = 원본 11.43px */
 .letter-wrap { container-type: inline-size; margin-bottom: 8px; }
