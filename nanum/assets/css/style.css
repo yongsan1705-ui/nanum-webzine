@@ -128,8 +128,8 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .cover-title img { animation: none; } }
 .cover-issue { font-weight: 600; color: var(--ink-soft); margin-bottom: 32px; }
 .cover h1, .cover-label, .cover-issue { text-shadow: 0 0 10px #fff, 0 0 18px rgba(255, 255, 255, .9); }
-/* 표지 버튼: G마켓 산스 Bold, 크고 꽉 차게 */
-.cover .btn { font-family: var(--font-title); font-weight: 700; font-size: 1.2rem; letter-spacing: -.01em; padding: 18px 40px; box-shadow: 0 8px 20px rgba(47, 111, 147, .28); }
+/* 표지 버튼: G마켓 산스 Bold, 작고 단정하게 (글자는 읽을 수 있는 크기 유지) */
+.cover .btn { font-family: var(--font-title); font-weight: 700; font-size: .82rem; letter-spacing: -.01em; padding: 9px 18px; box-shadow: 0 4px 12px rgba(47, 111, 147, .22); }
 
 /* Sections */
 .section { padding: 72px 0; }
@@ -324,7 +324,6 @@ td.msg { white-space: pre-wrap; min-width: 180px; max-width: 320px; }
   .cover h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
   .cover-title img { width: min(100%, 220px); }
   .cover-issue { margin-bottom: 20px; }
-  .cover .btn { font-size: 1.02rem; padding: 15px 26px; }
   .cover-label { font-size: 1.1rem; }
   .section { padding: 48px 0; }
   .grid { gap: 14px; }
