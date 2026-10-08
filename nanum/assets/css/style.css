@@ -216,6 +216,10 @@ button { font: inherit; cursor: pointer; }
 .article-body li { margin-bottom: .4em; }
 .article-body blockquote { margin: 2em 0; padding: 4px 0 4px 24px; border-left: 4px solid var(--issue); font-size: 1.25rem; font-weight: 600; }
 .article-body cite { display: block; font-size: .9rem; font-style: normal; color: var(--ink-soft); font-weight: 400; }
+/* 인용 왼쪽에 말한 원장 얼굴 */
+.article-body blockquote.has-avatar { display: grid; grid-template-columns: 56px 1fr; column-gap: 18px; align-items: start; }
+.article-body blockquote.has-avatar .avatar { grid-row: 1 / span 2; width: 56px; height: 56px; margin-top: 2px; }
+.article-body blockquote.has-avatar > p, .article-body blockquote.has-avatar > cite { grid-column: 2; }
 .article-body figure { margin: 2em 0; }
 .ph-img, .ph-video { aspect-ratio: 16 / 9; border-radius: 12px; background: repeating-linear-gradient(45deg, #ece5d9 0 12px, #f4efe6 12px 24px); display: grid; place-items: center; color: var(--ink-soft); font-size: .9rem; }
 /* 유튜브 영상 썸네일: 누르면 유튜브로 이동 */
