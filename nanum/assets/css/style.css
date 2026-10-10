@@ -105,7 +105,7 @@ button { font: inherit; cursor: pointer; }
   color: var(--ink);
   min-height: clamp(560px, 78vh, 820px);
   display: flex; align-items: center;
-  padding: 72px 0;
+  padding: clamp(120px, 18vh, 200px) 0 56px;
 }
 .cover::before {
   content: ""; position: absolute; z-index: -1;
@@ -115,6 +115,7 @@ button { font: inherit; cursor: pointer; }
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 28%, #000 92%, transparent 100%);
 }
+.cover-inner { padding-left: clamp(8px, 3vw, 40px); }
 .cover-label { font-family: var(--font-title); font-size: 1.35rem; font-weight: 500; letter-spacing: .04em; color: var(--issue); margin-bottom: .6em; }
 .cover h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 800; margin: .1em 0 .2em; color: #183a5a; }
 /* 표지 제목: SVG 로고 (흰 테두리 빛으로 눈송이 위에서도 읽히게) */
@@ -370,10 +371,10 @@ td.msg { white-space: pre-wrap; min-width: 180px; max-width: 320px; }
   /* 모바일: 이미지 전체(가로 100%)가 보이도록 표지 비율을 이미지와 같게 → 아래가 잘리지 않음 */
   .cover {
     aspect-ratio: 1481 / 2000; min-height: 0;
-    align-items: flex-start; padding: 40px 0 0;
+    align-items: flex-start; padding: clamp(72px, 22vw, 150px) 0 0;
   }
   .cover::before { inset: 0; aspect-ratio: auto; -webkit-mask-image: none; mask-image: none; }
-  .cover-inner { max-width: 62%; margin-left: 16px; }
+  .cover-inner { max-width: 62%; margin-left: 28px; padding-left: 0; }
   .cover h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
   .cover-title img { width: min(100%, 220px); }
   .cover-issue { margin-bottom: 20px; }
