@@ -207,6 +207,8 @@ button { font: inherit; cursor: pointer; }
 .media-row::after { content: ""; display: block; clear: both; }
 .article-body .media-row figure { float: left; width: 200px; margin: .3em 28px 12px 0; }
 .media-text > p:first-child { margin-top: 0; }
+.media-text > .qa:first-child { margin-top: 0; }
+.article-body .media-row figure.plain img { background: none; border-radius: 0; }
 .media-text > p { text-align: justify; }
 @media (max-width: 640px) {
   .article-body .media-row figure { width: 40%; margin-right: 16px; }
