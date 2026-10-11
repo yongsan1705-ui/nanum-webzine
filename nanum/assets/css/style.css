@@ -209,9 +209,11 @@ button { font: inherit; cursor: pointer; }
 .media-text > p:first-child { margin-top: 0; }
 .media-text > .qa:first-child { margin-top: 0; }
 .article-body .media-row figure.plain img { background: none; border-radius: 0; }
+.article-body .media-row figure.plain { width: 130px; margin-right: 24px; }
 .media-text > p { text-align: justify; }
 @media (max-width: 640px) {
   .article-body .media-row figure { width: 40%; margin-right: 16px; }
+  .article-body .media-row figure.plain { width: 28%; }
   .media-text > p { word-break: normal; line-break: strict; }
 }
 /* 소제목 옆 원장 얼굴 사진 */
